@@ -1,0 +1,13 @@
+# Node
+node_modules/
+
+
+# Env
+.env
+
+
+
+# Uploads
+uploads/
+uploads_videos/
+
