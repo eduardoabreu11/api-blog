@@ -43,7 +43,7 @@ async function EditarVideos(req, res) {
     if (req.file) {
       const host = req.get("host");
       const protocol = req.protocol;
-      video_url = `${protocol}://${host}/uploads/videos/${req.file.filename}`;
+      video_url = `${protocol}://${host}/uploads_videos/${req.file.filename}`;
     }
 
     const videoAtualizado = await serviceVideos.EditarVideo({ id_video, video_url });

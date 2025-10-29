@@ -65,15 +65,15 @@ async function ListarMateria(req, res) {
 async function InserirMateria(req, res) {
   try {
     const { titulo, subtitulo, texto } = req.body;
-    let foto = null;
+    let imagem_url = null;
 
     if (req.file) {
       const host = req.get("host");
       const protocol = req.protocol;
-      foto = `${protocol}://${host}/uploads/${req.file.filename}`;
+      imagem_url = `${protocol}://${host}/uploads/${req.file.filename}`;
     }
 
-    const materia = await serviceMaterias.InserirMateria({ titulo, subtitulo, texto, foto });
+    const materia = await serviceMaterias.InserirMateria({ titulo, subtitulo, texto, imagem_url });
     res.status(201).json(materia);
   } catch (error) {
     res.status(500).json({ error });
@@ -85,15 +85,15 @@ async function EditarMateria(req, res) {
     const { id_materia } = req.params;
     
     const { titulo, subtitulo, texto } = req.body;
-    let foto = null;
+    let imagem_url = null;
 
     if (req.file) {
       const host = req.get("host");
       const protocol = req.protocol;
-      foto = `${protocol}://${host}/uploads/${req.file.filename}`;
+      imagem_url = `${protocol}://${host}/uploads/${req.file.filename}`;
     }
 
-    const materia = await serviceMaterias.EditarMateria({ id_materia, titulo, subtitulo, texto, foto });
+    const materia = await serviceMaterias.EditarMateria({ id_materia, titulo, subtitulo, texto, imagem_url });
     res.status(200).json(materia);
   } catch (error) {
     console.error(error);

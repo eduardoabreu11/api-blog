@@ -65,9 +65,9 @@ async function EditarColunista({nome, foto, id_colunista}) {
 
 
 
-async function ExcluirColunista(id_colunista) {
+async function ExcluirColunista({id_colunista}) {
 
-
+  console.log(id_colunista + "repo")
   let sql = `delete from colunistas where id_colunista = ?`;
     await query(sql, [id_colunista]);
    

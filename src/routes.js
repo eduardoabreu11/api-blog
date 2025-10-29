@@ -12,6 +12,8 @@ import controllerMaterias from "./controllers/controller.materias.js";
 
 const router = Router();
 
+
+
 // usuarios
 
 router.post("/usuarios/login", controllerUsuario.Login);
@@ -69,8 +71,8 @@ router.get("/colunistas/:id_colunista/posts", controllerColunistas.ListarPosts);
 //Materias
 router.get("/admin/materias", jwt.ValidateJwt, controllerMaterias.PegarMaterias);  
 router.get("/admin/materias/:id_materia", jwt.ValidateJwt, controllerMaterias.PegarMateria);  
-router.post("/materias", jwt.ValidateJwt, upload.single('foto'),controllerMaterias.InserirMateria);  
-router.put("/materias/:id_materia", jwt.ValidateJwt, upload.single('foto'),controllerMaterias.EditarMateria);  
+router.post("/materias", jwt.ValidateJwt, upload.single('imagem_url'),controllerMaterias.InserirMateria);  
+router.put("/materias/:id_materia", jwt.ValidateJwt, upload.single('imagem_url'),controllerMaterias.EditarMateria);  
 router.delete("/materias/:id_materia", jwt.ValidateJwt, controllerMaterias.ExcluirMateria);  
 
 router.get("/materias", controllerMaterias.ListarMaterias);

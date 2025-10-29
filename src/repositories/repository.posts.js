@@ -13,7 +13,7 @@ async function Inserir(texto, imagem_url, id_usuario, titulo) {
 }
 
 
-async function Editar(id_usuario, id_post, texto, imagem_url, titulo) {
+async function Editar({id_usuario, id_post, texto, imagem_url, titulo}) {
   let sql = `
     update posts
        set texto = coalesce(?, texto),
@@ -22,7 +22,7 @@ async function Editar(id_usuario, id_post, texto, imagem_url, titulo) {
      where id_usuario = ? and id_post = ?
   `;
 
-  await query(sql, [texto, imagem_url, id_usuario, id_post, titulo ]);
+  await query(sql, [texto, imagem_url, titulo, id_usuario, id_post]);
 
   // Pega o registro atualizado
   const rows = await query(

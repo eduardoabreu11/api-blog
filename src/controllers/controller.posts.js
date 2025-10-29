@@ -32,7 +32,7 @@ async function Editar(req, res) {
   try {
     const id_usuario = req.id_usuario;
     const id_post = req.params.id_post;
-    const { texto } = req.body;
+    const { texto, titulo } = req.body;
 
     let imagem_url = null;
 
@@ -43,7 +43,7 @@ async function Editar(req, res) {
       imagem_url = `${protocol}://${host}/uploads/${req.file.filename}`;
     }
 
-    const postAtualizado = await servicePosts.Editar(id_usuario, id_post, texto, imagem_url);
+    const postAtualizado = await servicePosts.Editar({id_usuario, id_post, texto, imagem_url, titulo});
 
     res.status(200).json(postAtualizado);
   } catch (error) {
@@ -75,6 +75,7 @@ async function PostsId(req, res) {
 
 
     try{
+      console.log("macacooo")
 
     const id_usuario = req.id_usuario
     const id_post = req.params.id_post;

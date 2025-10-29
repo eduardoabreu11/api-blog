@@ -16,11 +16,11 @@ async function PostarVideo(video_url) {
 
 async function EditarVideo({ id_video, video_url }) {
   const sql = `
-    UPDATE videos
-    SET video = COALESCE(?, video)
-    WHERE id_video = ?
-    RETURNING id_video, video
-  `;
+  UPDATE videos
+  SET video_url = COALESCE(?, video_url)
+  WHERE id_video = ?
+  RETURNING id_video, video_url
+`;
   const result = await query(sql, [video_url, id_video]);
   return result[0] || null;
 }

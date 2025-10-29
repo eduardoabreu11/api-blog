@@ -47,10 +47,10 @@ async function EditarColunista({nome, foto, id_colunista}) {
   return post;
 }
 
-async function ExcluirColunista(id_colunista) {
+async function ExcluirColunista({id_colunista}) {
 
-
-    const usuario = await repoColunistas.ExcluirColunista(id_colunista )
+ console.log(id_colunista + "service")
+    const usuario = await repoColunistas.ExcluirColunista({id_colunista })
 
     return usuario
 

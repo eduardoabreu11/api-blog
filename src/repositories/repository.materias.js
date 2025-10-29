@@ -61,31 +61,31 @@ async function ListarMateria(id_materia) {
 
 
 
-async function InserirMateria({titulo, texto, foto, subtitulo}) {
+async function InserirMateria({titulo, texto, imagem_url, subtitulo}) {
   let sql = `
-    insert into materias(titulo, texto, foto, subtitulo)
+    insert into materias(titulo, texto, imagem_url, subtitulo)
     values(?, ?, ?, ?)
-    returning id_materia, titulo, texto, foto, subtitulo
+    returning id_materia, titulo, texto, imagem_url, subtitulo
   `;
-  const materia = await query(sql, [titulo, texto, foto, subtitulo]);
+  const materia = await query(sql, [titulo, texto, imagem_url, subtitulo]);
 
   return materia[0];
 }
 
 
 
-async function EditarMateria({ id_materia, titulo, texto, foto, subtitulo }) {
+async function EditarMateria({ id_materia, titulo, texto, imagem_url, subtitulo }) {
   const sql = `
     UPDATE materias
        SET titulo    = COALESCE(?, titulo),
            texto     = COALESCE(?, texto),
-           foto      = COALESCE(?, foto),
+           imagem_url      = COALESCE(?, imagem_url),
            subtitulo = COALESCE(?, subtitulo)
      WHERE id_materia = ?
-     RETURNING id_materia, titulo, texto, foto, subtitulo
+     RETURNING id_materia, titulo, texto, imagem_url, subtitulo
   `;
 
-  const materia = await query(sql, [titulo, texto, foto, subtitulo, id_materia]);
+  const materia = await query(sql, [titulo, texto, imagem_url, subtitulo, id_materia]);
 
   return materia[0] || null;
 }

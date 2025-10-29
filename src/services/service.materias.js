@@ -20,14 +20,14 @@ async function ListarMateria(id_materia) {
   return materias;
 }
 
-async function InserirMateria({ titulo, subtitulo, texto, foto }) {
-  const materia = await repoMaterias.InserirMateria({ titulo,subtitulo, texto, foto });
+async function InserirMateria({ titulo, subtitulo, texto, imagem_url }) {
+  const materia = await repoMaterias.InserirMateria({ titulo,subtitulo, texto, imagem_url });
   return materia;
 }
 
-async function EditarMateria({ id_materia, titulo,subtitulo, texto, foto }) {
+async function EditarMateria({ id_materia, titulo,subtitulo, texto, imagem_url }) {
     
-  const materia = await repoMaterias.EditarMateria({ id_materia, titulo, subtitulo, texto, foto });
+  const materia = await repoMaterias.EditarMateria({ id_materia, titulo, subtitulo, texto, imagem_url });
   return materia;
 }
 

@@ -85,6 +85,8 @@ async function ExcluirColunista(req, res) {
   try {
     const { id_colunista } = req.params;
 
+     console.log(id_colunista + "controller")
+
     const colunistaExcluido = await serviceColunistas.ExcluirColunista({ id_colunista });
 
     res.status(200).json(colunistaExcluido);
@@ -192,8 +194,9 @@ async function EditarPost(req, res) {
 async function ExcluirPost(req, res) {
   try {
 
-    
+    console.log("ae")
     const { id_post_colunista, id_colunista } = req.params;
+    
     
     console.log(id_colunista, id_post_colunista + " controller")
     const PostExcluido = await serviceColunistas.ExcluirPost({ id_post_colunista, id_colunista });

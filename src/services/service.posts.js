@@ -12,9 +12,9 @@ async function Inserir(texto, imagem_url, id_usuario, titulo) {
 
 
 
-async function Editar(id_usuario, id_post, texto, imagem_url) {
+async function Editar({id_usuario, id_post, texto, imagem_url, titulo}) {
 
-  const post = await repoPosts.Editar(id_usuario, id_post, texto, imagem_url);
+  const post = await repoPosts.Editar({id_usuario, id_post, texto, imagem_url, titulo});
 
   
   return post;
