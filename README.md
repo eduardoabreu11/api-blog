@@ -1,84 +1,270 @@
-Requisitos funcionais:
--[x] usuario(admin) se autentica na web
-    POST /usuarios/login
--[x] usuario(admin) cria sua conta  
-    POST /usuarios/registro
+# 📰 API — Blog 
 
--[x] admin/usuarios recebem todos os posts
-    GET /posts
+API desenvolvida em **Node.js + Express** com **JWT**, **Multer** para upload de imagens/vídeos e **SQLite** para persistência.  
+Ela atende **três camadas** do projeto:
 
--[x] (Admin) visualiza um post específico por ID
-    GET /posts/id_post
+- **1️⃣ Site público (visitantes)**
+- **2️⃣ Painel do Admin Máximo** (controle total)
+- **3️⃣ Painel de Colunistas** (controle parcial dos conteúdos próprios)
 
--[x] (admin)edita post
-    PUT /posts/id_post
+---
 
--[x] (admin)insere post
-    POST /posts
+## 🚀 Tecnologias
 
--[x] (admin)exclui post
-    DELETE /posts/id_post
+- Node.js
+- Express
+- SQLite3
+- Multer (upload)
+- JWT
+- Bcrypt
+- CORS
+- Dotenv
 
+---
 
--[] admin/usuarios recebem todos videos e banners
-    GET/midia
+## 📦 Instalação
 
--[] (admin) edita video e banner
-    PUT/midia
+```bash
+git clone https://github.com/seuusuario/api-blog.git
+cd api-blog
+npm install
+```
 
+---
 
--[x] admin recebem todos colunistas
-    GET /colunistas
+## ▶️ Rodar o servidor
 
--[x] (admin) insere colunistas
-    POST /colunistas
+Crie o arquivo `.env`:
 
--[x] (admin) edita colunistas
-    PUT /colunistas/ID_COLUNISTA
+```
+PORT=3001
+JWT_SECRET=seusecretodetoken
+```
 
--[x] (admin) remove colunistas
-    DELETE /colunistas/ID_COLUNISTA
+Start:
 
--[x] admin recebem todos posts do colunista
-    GET /colunistas/:id_colunista/posts
+```bash
+node index.js
+```
 
--[x] (admin/colunista) insere post
-    POST /colunistas/:id_colunista/posts
+---
 
--[x] (admin/colunista) edita post
-    PUT /colunistas/:id_colunista/posts/ID_POST
+# 🔐 Sistema de Permissões
 
--[x] (admin/colunista) exclui post
-    DELETE /colunistas/:id_colunista/posts/ID_POST
+### 👑 **Administrador Máximo**
+Pode:
+- Criar/editar/excluir usuários
+- Criar/editar/excluir posts
+- Criar banners
+- Criar vídeos
+- Criar colunistas
+- Manipular matérias
+- Gerenciar posts de colunistas
 
-    
+### ✍️ **Colunista**
+Pode:
+- Editar apenas seu próprio perfil
+- Criar/editar/excluir **somente seus posts**
+- Não acessa dados de outros colunistas
 
+### 🌎 **Visitantes**
+Podem:
+- Ver posts públicos
+- Ver matérias
+- Ver colunistas
+- Ver vídeos e banners
 
--[] (admin) recebem todos texto com imagem
-    GET /texto
+---
 
--[] (Admin) visualiza um texto com imagem específico por ID
-    GET /textos/:id_texto
+# 📁 Estrutura do Projeto
 
--[] (admin) insere texto com imagem
-    POST /textos
+```
+src/
+ ├── controllers/
+ │     ├── controllerUsuario.js
+ │     ├── controllerPosts.js
+ │     ├── controllerBanners.js
+ │     ├── controllerVideos.js
+ │     ├── controllerColunistas.js
+ │     └── controllerMaterias.js
+ │
+ ├── database/
+ │     ├── database.db
+ │     └── sqlite.js
+ │
+ ├── repositories/
+ │     ├── repoUsuario.js
+ │     ├── repoPosts.js
+ │     ├── repoBanners.js
+ │     ├── repoVideos.js
+ │     ├── repoColunistas.js
+ │     └── repoMaterias.js
+ │
+ ├── services/
+ │     ├── serviceUsuario.js
+ │     ├── servicePosts.js
+ │     ├── serviceColunistas.js
+ │     ├── serviceMaterias.js
+ │     ├── serviceBanners.js
+ │     └── serviceVideos.js
+ │
+ ├── uploads/
+ ├── uploads_videos/
+ ├── routes.js
+ ├── token.js
+ ├── index.js
+```
 
--[] (admin) edita texto com imagem
-    PUT /textos/:id_texto
+---
 
--[] (admin) exclui texto com imagem
-    DELETE /textos/:id_texto
+# 📡 Rotas da API
 
+## 👤 **Usuários**
+```
+POST   /usuarios/login
+POST   /usuarios/registro
+GET    /usuarios
+PUT    /usuarios
+PUT    /usuarios/password
+```
 
+---
 
+## 📝 **Posts (Admin)**
+```
+POST   /posts
+GET    /posts/admin
+GET    /posts/admin/:id_post
+PUT    /posts/:id_post
+DELETE /posts/:id_post
+```
 
-requisistos nao funcionais
+## 📰 **Posts Públicos**
+```
+GET    /posts
+GET    /posts/:id_post
+```
 
--[] jwt para identificação
--[] senha criptografada
+---
 
+## 🎥 Vídeos
+```
+GET    /videos/:id_video
+POST   /videos
+PUT    /videos/:id_video
+```
 
-regras de negocio
--[] (admin)Todos campos obrigatorios
--[] (admin) texto minimo 100 caractres
--[]  Ordem de exibição dos posts: sempre do mais recente para o mais antigo
+---
+
+## 🏞 Banners
+```
+GET    /banners
+GET    /banners/:id_banner
+POST   /banners
+PUT    /banners/:id_banner
+```
+
+---
+
+# ✍️ Colunistas
+
+### 👑 Admin
+```
+GET    /admin/colunistas
+POST   /colunistas
+PUT    /colunistas/:id_colunista
+DELETE /colunistas/:id_colunista
+```
+
+### 🌎 Público
+```
+GET    /colunistas
+```
+
+---
+
+# 📝 Posts dos Colunistas
+
+### 👑 Admin
+```
+GET    /admin/colunistas/:id_colunista/posts
+POST   /colunistas/:id_colunista/posts
+PUT    /colunistas/:id_colunista/posts/:id_post_colunista
+DELETE /colunistas/:id_colunista/posts/:id_post_colunista
+```
+
+### 🌎 Público
+```
+GET    /colunistas/:id_colunista/posts
+```
+
+---
+
+# 📰 Matérias
+
+### 👑 Admin
+```
+GET    /admin/materias
+GET    /admin/materias/:id_materia
+POST   /materias
+PUT    /materias/:id_materia
+DELETE /materias/:id_materia
+```
+
+### 🌎 Público
+```
+GET    /materias
+GET    /materias/:id_materia
+```
+
+---
+
+# 🖼 Uploads
+
+### 📸 Imagens  
+passam pela pasta:
+
+```
+/uploads
+```
+
+### 🎥 Vídeos  
+passam pela pasta:
+
+```
+/uploads_videos
+```
+
+Rotas para upload usam `multer.single("imagem")` ou `multer.single("video_url")`.
+
+---
+
+# 🔑 Autenticação
+
+O login retorna um token JWT:
+
+```json
+{
+  "token": "token123..."
+}
+```
+
+Usar assim:
+
+```
+Authorization: Bearer seu_token
+```
+
+Todas as rotas de admin e colunista **exigem JWT**.
+
+---
+
+# ✔️ Status
+
+API estável, modularizada e pronta para integrar com:
+
+- painel do admin
+- painel dos colunistas
+- front-end do blog
+
+---

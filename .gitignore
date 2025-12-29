@@ -1,13 +1,13 @@
 # Node
 node_modules/
 
+# Database
+banco.db
+*.db
 
 # Env
 .env
 
-
-
 # Uploads
 uploads/
 uploads_videos/
-
