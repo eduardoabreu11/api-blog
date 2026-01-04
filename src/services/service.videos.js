@@ -1,4 +1,4 @@
-import repoVideos from "../repositories/repository.videos.js";
+import repoVideos from "../repositories/repository-pg.videos.js";
 
 async function PegarVideo(id_video) {
   

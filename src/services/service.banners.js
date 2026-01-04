@@ -1,4 +1,4 @@
-import repoBanners from "../repositories/repository.banners.js"
+import repoBanners from "../repositories/repository-pg.banners.js"
 
 
 

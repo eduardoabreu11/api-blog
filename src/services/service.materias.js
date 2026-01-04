@@ -1,4 +1,4 @@
-import repoMaterias from "../repositories/repository.materias.js";
+import repoMaterias from "../repositories/repository-pg.materias.js";
 
 
 

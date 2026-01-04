@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "../token.js";
-import repoUsuario from "../repositories/repository.usuario.js"
+import repoUsuario from "../repositories/repository-pg.usuario.js"
 
 
 

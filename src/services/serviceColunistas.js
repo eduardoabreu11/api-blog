@@ -1,4 +1,4 @@
-import repoColunistas from "../repositories/repository.colunistas.js";
+import repoColunistas from "../repositories/repository-pg.colunistas.js";
 
 
 async function PegarColunistas() {

@@ -1,4 +1,4 @@
-import repoPosts from "../repositories/repository.posts.js"
+import repoPosts from "../repositories/repository-pg.posts.js"
 
 async function Inserir(texto, imagem_url, id_usuario, titulo) {
 
