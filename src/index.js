@@ -25,6 +25,8 @@ app.use("/uploads_videos", express.static(path.resolve("uploads_videos")));
 app.use(router);
 
 // iniciar servidor
-app.listen(process.env.PORT, () => {
-    console.log("servidor rodando na porta " + process.env.PORT);
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
