@@ -14,7 +14,7 @@ const __dirname = path.dirname(__filename);
 // body json
 app.use(express.json());
 
-// 🔥 CORS CORRETO (PUT, POST, DELETE, OPTIONS)
+// ✅ CORS CORRETO (PUT, POST, DELETE, OPTIONS)
 app.use(cors({
   origin: [
     "https://adm.orufado.com.br",
@@ -35,9 +35,6 @@ app.use(cors({
   ],
   credentials: true
 }));
-
-// 🔥 libera preflight (OPTIONS)
-app.options("*", cors());
 
 // 📂 imagens públicas
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
