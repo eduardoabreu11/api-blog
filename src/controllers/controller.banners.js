@@ -51,6 +51,7 @@ async function InserirBanner(req, res) {
 async function EditarBanner(req, res) {
   try {
     const { id_banner } = req.params;
+    const { tipo } = req.body; // ✅ PEGA O TIPO
 
     let foto = null;
 
@@ -60,7 +61,11 @@ async function EditarBanner(req, res) {
       foto = `${protocol}://${host}/uploads/${req.file.filename}`;
     }
 
-    const BannerAtualizado = await serviceBanners.EditarBanner({ id_banner, foto });
+    const BannerAtualizado = await serviceBanners.EditarBanner({
+      id_banner,
+      foto,
+      tipo, // ✅ PASSA O TIPO
+    });
 
     res.status(200).json(BannerAtualizado);
   } catch (error) {

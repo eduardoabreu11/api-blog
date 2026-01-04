@@ -20,19 +20,13 @@ async function InserirBanner(fotoUrl) {
 
 
 
-async function EditarBanner({id_banner, foto}) {
-
-
-    
-   console.log(foto)
-    const banner = await repoBanners.EditarBanner({id_banner, foto});
-
-    return banner
-
-
-    
-
-}           
+async function EditarBanner({ id_banner, foto, tipo }) {
+  return await repoBanners.EditarBanner({
+    id_banner,
+    foto,
+    tipo,
+  });
+}          
 
 
 
