@@ -1,164 +1,144 @@
 import servicePosts from "../services/service.posts.js";
 
+/* =========================
+   POSTS
+========================= */
 
 async function Inserir(req, res) {
   try {
-
-
-
-
     const id_usuario = req.id_usuario;
-    const { titulo } = req.body;
-    const { texto } = req.body;
+    const { titulo, texto } = req.body;
     let imagem_url = null;
 
     if (req.file) {
-      // cria a URL pública da imagem
       const host = req.get("host");
       const protocol = req.protocol;
       imagem_url = `${protocol}://${host}/uploads/${req.file.filename}`;
     }
 
-    // envia para o service/posts servicePosts.Inserir
-    const post = await servicePosts.Inserir(texto, imagem_url, id_usuario, titulo);
+    const post = await servicePosts.Inserir(
+      texto,
+      imagem_url,
+      id_usuario,
+      titulo
+    );
 
-    res.status(201).json(post);
+    return res.status(201).json(post);
   } catch (error) {
-    res.status(500).json({ error });
+    console.error(error);
+    return res.status(500).json({ error: "Erro ao inserir post" });
   }
 }
 
 async function Editar(req, res) {
   try {
     const id_usuario = req.id_usuario;
-    const id_post = req.params.id_post;
+    const { id_post } = req.params;
     const { texto, titulo } = req.body;
-
     let imagem_url = null;
 
-    // Se o usuário enviou nova imagem, monta a URL pública
     if (req.file) {
       const host = req.get("host");
       const protocol = req.protocol;
       imagem_url = `${protocol}://${host}/uploads/${req.file.filename}`;
     }
 
-    const postAtualizado = await servicePosts.Editar({id_usuario, id_post, texto, imagem_url, titulo});
+    const postAtualizado = await servicePosts.Editar({
+      id_usuario,
+      id_post,
+      texto,
+      imagem_url,
+      titulo,
+    });
 
-    res.status(200).json(postAtualizado);
+    return res.status(200).json(postAtualizado);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao editar post" });
+    return res.status(500).json({ error: "Erro ao editar post" });
   }
 }
 
 async function Excluir(req, res) {
+  try {
+    const id_usuario = req.id_usuario;
+    const { id_post } = req.params;
 
+    const result = await servicePosts.Excluir(id_usuario, id_post);
 
-    try{
-
-   const id_usuario = req.id_usuario
-    const id_post = req.params.id_post;
-    
-
-    const usuario = await servicePosts.Excluir(id_usuario,id_post )
-
-    res.status(201).json(usuario)
-
-    }catch(error){
-        res.status(500).json({error})
-    }
-
+    return res.status(200).json(result);
+    // alternativa REST pura:
+    // return res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Erro ao excluir post" });
+  }
 }
 
 async function PostsId(req, res) {
+  try {
+    const id_usuario = req.id_usuario;
+    const { id_post } = req.params;
 
+    const post = await servicePosts.PostsId(id_usuario, id_post);
 
-    try{
-      console.log("macacooo")
-
-    const id_usuario = req.id_usuario
-    const id_post = req.params.id_post;
-
-    
-    
-    
-
-    const usuario = await servicePosts.PostsId(id_usuario, id_post )
-
-    res.status(201).json(usuario)
-
-    }catch(error){
-        res.status(500).json({error})
-    }
-
+    return res.status(200).json(post);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Erro ao buscar post" });
+  }
 }
-
-
-
 
 async function Posts(req, res) {
+  try {
+    const id_usuario = req.id_usuario;
 
+    const posts = await servicePosts.Posts(id_usuario);
 
-    try{
-
-    const id_usuario = req.id_usuario
-    
-    
-
-    const usuario = await servicePosts.Posts(id_usuario )
-
-    res.status(201).json(usuario)
-
-    }catch(error){
-        res.status(500).json({error})
-    }
-
+    return res.status(200).json(posts);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Erro ao buscar posts" });
+  }
 }
 
-
-// get para o blog
+/* =========================
+   POSTS PÚBLICOS (BLOG)
+========================= */
 
 async function PostsUsuarios(req, res) {
+  try {
+    const posts = await servicePosts.PostsUsuarios();
 
-
-    try{
-
-    
-    
-    
-
-    const usuario = await servicePosts.PostsUsuarios()
-
-    res.status(201).json(usuario)
-
-    }catch(error){
-        res.status(500).json({error})
-    }
-
+    return res.status(200).json(posts);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Erro ao buscar posts" });
+  }
 }
 
-
-async function IdPost (req, res) {
-     try {
+async function IdPost(req, res) {
+  try {
     const { id_post } = req.params;
-    console.log(id_post)
+
     const post = await servicePosts.IdPost(id_post);
 
     if (!post) {
       return res.status(404).json({ error: "Post não encontrado" });
     }
 
-    res.json(post);
+    return res.status(200).json(post);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao buscar post" });
+    return res.status(500).json({ error: "Erro ao buscar post" });
   }
 }
 
-
-
-export default {Inserir, Editar, Excluir, Posts, PostsId, PostsUsuarios, IdPost}
-
-
-
+export default {
+  Inserir,
+  Editar,
+  Excluir,
+  Posts,
+  PostsId,
+  PostsUsuarios,
+  IdPost,
+};

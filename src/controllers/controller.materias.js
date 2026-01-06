@@ -1,64 +1,58 @@
 import serviceMaterias from "../services/service.materias.js";
 
+/* =========================
+   MATÉRIAS
+========================= */
+
 async function PegarMaterias(req, res) {
   try {
-    const materias = await serviceMaterias.PegarMaterias(); 
-
-    if (!materias || materias.length === 0) {
-      return res.status(404).json({ error: "Nenhuma matéria encontrada" });
-    }
-
-    res.status(200).json(materias);
+    const materias = await serviceMaterias.PegarMaterias();
+    return res.status(200).json(materias);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao buscar matérias" });
+    return res.status(500).json({ error: "Erro ao buscar matérias" });
   }
 }
 
 async function ListarMaterias(req, res) {
   try {
-    const materias = await serviceMaterias.ListarMaterias(); 
-
-    if (!materias || materias.length === 0) {
-      return res.status(404).json({ error: "Nenhuma matéria encontrada" });
-    }
-
-    res.status(200).json(materias);
+    const materias = await serviceMaterias.ListarMaterias();
+    return res.status(200).json(materias);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao buscar matérias" });
+    return res.status(500).json({ error: "Erro ao buscar matérias" });
   }
 }
 
 async function PegarMateria(req, res) {
   try {
     const { id_materia } = req.params;
-    const materia = await serviceMaterias.PegarMateria(id_materia); 
+    const materia = await serviceMaterias.PegarMateria(id_materia);
 
-    if (!materia || materia.length === 0) {
-      return res.status(404).json({ error: "Nenhuma matéria encontrada" });
+    if (!materia) {
+      return res.status(404).json({ error: "Matéria não encontrada" });
     }
 
-    res.status(200).json(materia);
+    return res.status(200).json(materia);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao buscar matéria" });
+    return res.status(500).json({ error: "Erro ao buscar matéria" });
   }
 }
 
 async function ListarMateria(req, res) {
   try {
     const { id_materia } = req.params;
-    const materia = await serviceMaterias.ListarMateria(id_materia); 
+    const materia = await serviceMaterias.ListarMateria(id_materia);
 
-    if (!materia || materia.length === 0) {
-      return res.status(404).json({ error: "Nenhuma matéria encontrada" });
+    if (!materia) {
+      return res.status(404).json({ error: "Matéria não encontrada" });
     }
 
-    res.status(200).json(materia);
+    return res.status(200).json(materia);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao buscar matéria" });
+    return res.status(500).json({ error: "Erro ao buscar matéria" });
   }
 }
 
@@ -73,17 +67,23 @@ async function InserirMateria(req, res) {
       imagem_url = `${protocol}://${host}/uploads/${req.file.filename}`;
     }
 
-    const materia = await serviceMaterias.InserirMateria({ titulo, subtitulo, texto, imagem_url });
-    res.status(201).json(materia);
+    const materia = await serviceMaterias.InserirMateria({
+      titulo,
+      subtitulo,
+      texto,
+      imagem_url,
+    });
+
+    return res.status(201).json(materia);
   } catch (error) {
-    res.status(500).json({ error });
+    console.error(error);
+    return res.status(500).json({ error: "Erro ao inserir matéria" });
   }
 }
 
 async function EditarMateria(req, res) {
   try {
     const { id_materia } = req.params;
-    
     const { titulo, subtitulo, texto } = req.body;
     let imagem_url = null;
 
@@ -93,22 +93,33 @@ async function EditarMateria(req, res) {
       imagem_url = `${protocol}://${host}/uploads/${req.file.filename}`;
     }
 
-    const materia = await serviceMaterias.EditarMateria({ id_materia, titulo, subtitulo, texto, imagem_url });
-    res.status(200).json(materia);
+    const materia = await serviceMaterias.EditarMateria({
+      id_materia,
+      titulo,
+      subtitulo,
+      texto,
+      imagem_url,
+    });
+
+    return res.status(200).json(materia);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao editar matéria" });
+    return res.status(500).json({ error: "Erro ao editar matéria" });
   }
 }
 
 async function ExcluirMateria(req, res) {
   try {
     const { id_materia } = req.params;
-    
-    const materiaExcluida = await serviceMaterias.ExcluirMateria({ id_materia });
-    res.status(200).json(materiaExcluida);
+
+    const result = await serviceMaterias.ExcluirMateria({ id_materia });
+
+    return res.status(200).json(result);
+    // alternativa REST pura:
+    // return res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error });
+    console.error(error);
+    return res.status(500).json({ error: "Erro ao excluir matéria" });
   }
 }
 
@@ -119,5 +130,5 @@ export default {
   EditarMateria,
   ExcluirMateria,
   ListarMaterias,
-  ListarMateria
+  ListarMateria,
 };

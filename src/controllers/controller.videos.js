@@ -1,15 +1,28 @@
 import serviceVideos from "../services/service.videos.js";
 
+/* =========================
+   VÍDEOS
+========================= */
+
 async function PegarVideos(req, res) {
   try {
     const { id_video } = req.params;
-     
-    
+
     const video = await serviceVideos.PegarVideo(id_video);
-    res.status(200).json(video);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Erro ao buscar vídeo" });
+
+    if (!video) {
+      return res.status(404).json({ error: "Vídeo não encontrado" });
+    }
+
+    return res.status(200).json(video);
+  } catch (error) {
+    console.error(error);
+
+    if (error.message === "Vídeo inválido") {
+      return res.status(400).json({ error: error.message });
+    }
+
+    return res.status(500).json({ error: "Erro ao buscar vídeo" });
   }
 }
 
@@ -21,23 +34,28 @@ async function PostarVideo(req, res) {
       const host = req.get("host");
       const protocol = req.protocol;
       video_url = `${protocol}://${host}/uploads_videos/${req.file.filename}`;
-      
     }
 
-    // envia só a string da URL para o service
-    console.log(video_url)
     const video = await serviceVideos.PostarVideos(video_url);
 
-    res.status(201).json(video);
+    return res.status(201).json(video);
   } catch (error) {
-    res.status(500).json({ error });
+    console.error(error);
+
+    if (
+      error.message === "URL do vídeo é obrigatória" ||
+      error.message === "Vídeo inválido"
+    ) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    return res.status(500).json({ error: "Erro ao postar vídeo" });
   }
 }
 
 async function EditarVideos(req, res) {
   try {
     const { id_video } = req.params;
-
     let video_url = null;
 
     if (req.file) {
@@ -46,13 +64,29 @@ async function EditarVideos(req, res) {
       video_url = `${protocol}://${host}/uploads_videos/${req.file.filename}`;
     }
 
-    const videoAtualizado = await serviceVideos.EditarVideo({ id_video, video_url });
+    const videoAtualizado = await serviceVideos.EditarVideo({
+      id_video,
+      video_url,
+    });
 
-    res.status(200).json(videoAtualizado);
+    return res.status(200).json(videoAtualizado);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao editar vídeo" });
+
+    if (error.message === "Vídeo inválido") {
+      return res.status(400).json({ error: error.message });
+    }
+
+    if (error.message === "Vídeo não encontrado") {
+      return res.status(404).json({ error: error.message });
+    }
+
+    return res.status(500).json({ error: "Erro ao editar vídeo" });
   }
 }
 
-export default { PegarVideos, EditarVideos, PostarVideo };
+export default {
+  PegarVideos,
+  EditarVideos,
+  PostarVideo,
+};
