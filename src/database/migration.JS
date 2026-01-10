@@ -1,7 +1,11 @@
 import db from "./postgresql.js";
 
 async function migrate() {
-  console.log("🚀 Criando tabelas no PostgreSQL...");
+  console.log("🚀 Rodando migrations no PostgreSQL...");
+
+  // =========================
+  // TABELAS BASE
+  // =========================
 
   await db.query(`
     CREATE TABLE IF NOT EXISTS usuarios (
@@ -65,7 +69,32 @@ async function migrate() {
     );
   `);
 
-  console.log("✅ Migration concluída");
+  // =========================
+  // EVOLUÇÃO: VÍDEO ATIVO
+  // =========================
+
+  // adiciona coluna "ativo" sem quebrar produção
+  await db.query(`
+    ALTER TABLE videos
+    ADD COLUMN IF NOT EXISTS ativo BOOLEAN DEFAULT false;
+  `);
+
+  // garante que sempre exista 1 vídeo ativo (o mais recente)
+  await db.query(`
+    UPDATE videos
+    SET ativo = true
+    WHERE id_video = (
+      SELECT id_video
+      FROM videos
+      ORDER BY id_video DESC
+      LIMIT 1
+    )
+    AND NOT EXISTS (
+      SELECT 1 FROM videos WHERE ativo = true
+    );
+  `);
+
+  console.log("✅ Migrations executadas com sucesso");
   process.exit();
 }
 
