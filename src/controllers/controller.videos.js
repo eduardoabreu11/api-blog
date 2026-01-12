@@ -1,4 +1,5 @@
 import serviceVideos from "../services/service.videos.js";
+import { uploadToCloudinary } from "../services/cloudinary.service.js";
 
 /* =========================
    VÍDEOS
@@ -31,9 +32,8 @@ async function PostarVideo(req, res) {
     let video_url = null;
 
     if (req.file) {
-      const host = req.get("host");
-      const protocol = req.protocol;
-      video_url = `${protocol}://${host}/uploads_videos/${req.file.filename}`;
+      const upload = await uploadToCloudinary(req.file, "videos");
+      video_url = upload.secure_url;
     }
 
     const video = await serviceVideos.PostarVideos(video_url);
@@ -59,9 +59,8 @@ async function EditarVideos(req, res) {
     let video_url = null;
 
     if (req.file) {
-      const host = req.get("host");
-      const protocol = req.protocol;
-      video_url = `${protocol}://${host}/uploads_videos/${req.file.filename}`;
+      const upload = await uploadToCloudinary(req.file, "videos");
+      video_url = upload.secure_url;
     }
 
     const videoAtualizado = await serviceVideos.EditarVideo({

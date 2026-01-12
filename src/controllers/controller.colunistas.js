@@ -1,4 +1,5 @@
 import serviceColunistas from "../services/serviceColunistas.js";
+import { uploadToCloudinary } from "../services/cloudinary.service.js";
 
 /* =========================
    COLUNISTAS
@@ -30,9 +31,8 @@ async function InserirColunista(req, res) {
     let foto = null;
 
     if (req.file) {
-      const host = req.get("host");
-      const protocol = req.protocol;
-      foto = `${protocol}://${host}/uploads/${req.file.filename}`;
+      const upload = await uploadToCloudinary(req.file, "colunistas");
+      foto = upload.secure_url;
     }
 
     const colunista = await serviceColunistas.InserirColunista({ nome, foto });
@@ -51,9 +51,8 @@ async function EditarColunista(req, res) {
     let foto = null;
 
     if (req.file) {
-      const host = req.get("host");
-      const protocol = req.protocol;
-      foto = `${protocol}://${host}/uploads/${req.file.filename}`;
+      const upload = await uploadToCloudinary(req.file, "colunistas");
+      foto = upload.secure_url;
     }
 
     const colunista = await serviceColunistas.EditarColunista({
@@ -72,12 +71,8 @@ async function EditarColunista(req, res) {
 async function ExcluirColunista(req, res) {
   try {
     const { id_colunista } = req.params;
-
     const result = await serviceColunistas.ExcluirColunista({ id_colunista });
-
     return res.status(200).json(result);
-    // alternativa REST pura:
-    // return res.status(204).send();
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Erro ao excluir colunista" });
@@ -92,7 +87,6 @@ async function PegarPosts(req, res) {
   try {
     const { id_colunista } = req.params;
     const posts = await serviceColunistas.PegarPosts(id_colunista);
-
     return res.status(200).json(posts);
   } catch (error) {
     console.error(error);
@@ -104,7 +98,6 @@ async function ListarPosts(req, res) {
   try {
     const { id_colunista } = req.params;
     const posts = await serviceColunistas.ListarPosts(id_colunista);
-
     return res.status(200).json(posts);
   } catch (error) {
     console.error(error);
@@ -119,9 +112,8 @@ async function InserirPost(req, res) {
     let foto = null;
 
     if (req.file) {
-      const host = req.get("host");
-      const protocol = req.protocol;
-      foto = `${protocol}://${host}/uploads/${req.file.filename}`;
+      const upload = await uploadToCloudinary(req.file, "colunistas_posts");
+      foto = upload.secure_url;
     }
 
     const post = await serviceColunistas.InserirPost({
@@ -145,9 +137,8 @@ async function EditarPost(req, res) {
     let foto = null;
 
     if (req.file) {
-      const host = req.get("host");
-      const protocol = req.protocol;
-      foto = `${protocol}://${host}/uploads/${req.file.filename}`;
+      const upload = await uploadToCloudinary(req.file, "colunistas_posts");
+      foto = upload.secure_url;
     }
 
     const post = await serviceColunistas.EditarPost({
@@ -168,15 +159,11 @@ async function EditarPost(req, res) {
 async function ExcluirPost(req, res) {
   try {
     const { id_post_colunista, id_colunista } = req.params;
-
     const result = await serviceColunistas.ExcluirPost({
       id_post_colunista,
       id_colunista,
     });
-
     return res.status(200).json(result);
-    // ou:
-    // return res.status(204).send();
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Erro ao excluir post" });

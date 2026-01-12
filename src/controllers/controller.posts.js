@@ -1,4 +1,5 @@
 import servicePosts from "../services/service.posts.js";
+import { uploadToCloudinary } from "../services/cloudinary.service.js";
 
 /* =========================
    POSTS
@@ -11,9 +12,8 @@ async function Inserir(req, res) {
     let imagem_url = null;
 
     if (req.file) {
-      const host = req.get("host");
-      const protocol = req.protocol;
-      imagem_url = `${protocol}://${host}/uploads/${req.file.filename}`;
+      const upload = await uploadToCloudinary(req.file, "posts");
+      imagem_url = upload.secure_url;
     }
 
     const post = await servicePosts.Inserir(
@@ -38,9 +38,8 @@ async function Editar(req, res) {
     let imagem_url = null;
 
     if (req.file) {
-      const host = req.get("host");
-      const protocol = req.protocol;
-      imagem_url = `${protocol}://${host}/uploads/${req.file.filename}`;
+      const upload = await uploadToCloudinary(req.file, "posts");
+      imagem_url = upload.secure_url;
     }
 
     const postAtualizado = await servicePosts.Editar({
@@ -66,8 +65,6 @@ async function Excluir(req, res) {
     const result = await servicePosts.Excluir(id_usuario, id_post);
 
     return res.status(200).json(result);
-    // alternativa REST pura:
-    // return res.status(204).send();
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Erro ao excluir post" });
@@ -91,9 +88,7 @@ async function PostsId(req, res) {
 async function Posts(req, res) {
   try {
     const id_usuario = req.id_usuario;
-
     const posts = await servicePosts.Posts(id_usuario);
-
     return res.status(200).json(posts);
   } catch (error) {
     console.error(error);
@@ -108,7 +103,6 @@ async function Posts(req, res) {
 async function PostsUsuarios(req, res) {
   try {
     const posts = await servicePosts.PostsUsuarios();
-
     return res.status(200).json(posts);
   } catch (error) {
     console.error(error);
@@ -119,7 +113,6 @@ async function PostsUsuarios(req, res) {
 async function IdPost(req, res) {
   try {
     const { id_post } = req.params;
-
     const post = await servicePosts.IdPost(id_post);
 
     if (!post) {

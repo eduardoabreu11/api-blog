@@ -1,4 +1,5 @@
 import serviceMaterias from "../services/service.materias.js";
+import { uploadToCloudinary } from "../services/cloudinary.service.js";
 
 /* =========================
    MATÉRIAS
@@ -52,7 +53,7 @@ async function ListarMateria(req, res) {
     return res.status(200).json(materia);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: "Erro ao buscar matériaa" });
+    return res.status(500).json({ error: "Erro ao buscar matéria" });
   }
 }
 
@@ -62,9 +63,8 @@ async function InserirMateria(req, res) {
     let imagem_url = null;
 
     if (req.file) {
-      const host = req.get("host");
-      const protocol = req.protocol;
-      imagem_url = `${protocol}://${host}/uploads/${req.file.filename}`;
+      const upload = await uploadToCloudinary(req.file, "materias");
+      imagem_url = upload.secure_url;
     }
 
     const materia = await serviceMaterias.InserirMateria({
@@ -88,9 +88,8 @@ async function EditarMateria(req, res) {
     let imagem_url = null;
 
     if (req.file) {
-      const host = req.get("host");
-      const protocol = req.protocol;
-      imagem_url = `${protocol}://${host}/uploads/${req.file.filename}`;
+      const upload = await uploadToCloudinary(req.file, "materias");
+      imagem_url = upload.secure_url;
     }
 
     const materia = await serviceMaterias.EditarMateria({
@@ -111,12 +110,8 @@ async function EditarMateria(req, res) {
 async function ExcluirMateria(req, res) {
   try {
     const { id_materia } = req.params;
-
     const result = await serviceMaterias.ExcluirMateria({ id_materia });
-
     return res.status(200).json(result);
-    // alternativa REST pura:
-    // return res.status(204).send();
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Erro ao excluir matéria" });
