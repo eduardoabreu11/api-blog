@@ -52,7 +52,7 @@ async function ListarMateria(req, res) {
     return res.status(200).json(materia);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: "Erro ao buscar matéria" });
+    return res.status(500).json({ error: "Erro ao buscar matériaa" });
   }
 }
 
