@@ -1,4 +1,5 @@
 import serviceBanners from "../services/service.banners.js";
+import { uploadToCloudinary } from "../services/cloudinary.service.js";
 
 async function PegarBanner(req, res) {
   try {
@@ -26,7 +27,6 @@ async function PegarBanner(req, res) {
 async function ListarBanners(req, res) {
   try {
     const banners = await serviceBanners.ListarBanners();
-
     return res.status(200).json(banners);
   } catch (err) {
     return res.status(500).json({ error: "Erro ao buscar banners" });
@@ -38,9 +38,8 @@ async function InserirBanner(req, res) {
     let foto = null;
 
     if (req.file) {
-      const host = req.get("host");
-      const protocol = req.protocol;
-      foto = `${protocol}://${host}/uploads/${req.file.filename}`;
+      const upload = await uploadToCloudinary(req.file, "banners");
+      foto = upload.secure_url;
     }
 
     const banner = await serviceBanners.InserirBanner(foto);
@@ -66,9 +65,8 @@ async function EditarBanner(req, res) {
     let foto = null;
 
     if (req.file) {
-      const host = req.get("host");
-      const protocol = req.protocol;
-      foto = `${protocol}://${host}/uploads/${req.file.filename}`;
+      const upload = await uploadToCloudinary(req.file, "banners");
+      foto = upload.secure_url;
     }
 
     const bannerAtualizado = await serviceBanners.EditarBanner({
