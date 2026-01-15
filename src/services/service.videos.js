@@ -29,6 +29,10 @@ async function PostarVideos(video_url) {
   return video;
 }
 
+async function ListarVideos() {
+  return await repoVideos.ListarVideos();
+}
+
 /**
  * Editar vídeo
  */
@@ -59,4 +63,5 @@ export default {
   PegarVideo,
   EditarVideo,
   PostarVideos,
+  ListarVideos
 };

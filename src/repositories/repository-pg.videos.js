@@ -19,11 +19,11 @@ async function PostarVideo(video_url) {
   const sql = `
     INSERT INTO videos (video_url)
     VALUES ($1)
-    RETURNING id_video
+    RETURNING id_video, video_url
   `;
 
   const { rows } = await db.query(sql, [video_url]);
-  return rows[0] || null;
+  return rows[0];
 }
 
 async function EditarVideo({ id_video, video_url }) {
@@ -38,12 +38,24 @@ async function EditarVideo({ id_video, video_url }) {
   return rows[0] || null;
 }
 
+async function ListarVideos() {
+  const sql = `
+    SELECT id_video, video_url
+      FROM videos
+     ORDER BY id_video DESC
+  `;
+
+  const { rows } = await db.query(sql);
+  return rows;
+}
+
 /* =========================
    EXPORT
 ========================= */
 
 export default {
   PegarVideo,
+  PostarVideo,
   EditarVideo,
-  PostarVideo
+  ListarVideos
 };
