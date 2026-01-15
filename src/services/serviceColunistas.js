@@ -5,13 +5,11 @@ import repoColunistas from "../repositories/repository-pg.colunistas.js";
 ========================= */
 
 async function PegarColunistas() {
-  const usuario = await repoColunistas.PegarColunistas();
-  return usuario;
+  return await repoColunistas.PegarColunistas();
 }
 
 async function ListarColunistas() {
-  const usuario = await repoColunistas.ListarColunistas();
-  return usuario;
+  return await repoColunistas.ListarColunistas();
 }
 
 async function InserirColunista({ nome, foto }) {
@@ -23,8 +21,7 @@ async function InserirColunista({ nome, foto }) {
     throw new Error("Foto do colunista é inválida");
   }
 
-  const usuario = await repoColunistas.InserirColunista({ nome, foto });
-  return usuario;
+  return await repoColunistas.InserirColunista({ nome, foto });
 }
 
 async function EditarColunista({ nome, foto, id_colunista }) {
@@ -36,23 +33,21 @@ async function EditarColunista({ nome, foto, id_colunista }) {
     throw new Error("Nome do colunista é obrigatório");
   }
 
-  if (!foto || typeof foto !== "string") {
+  if (foto !== null && typeof foto !== "string") {
     throw new Error("Foto do colunista é inválida");
   }
 
-  const colunistaExistente = await repoColunistas.PegarColunistas(id_colunista);
+  const colunistaExistente = await repoColunistas.PegarColunistaPorId(id_colunista);
 
   if (!colunistaExistente) {
     throw new Error("Colunista não encontrado");
   }
 
-  const post = await repoColunistas.EditarColunista({
+  return await repoColunistas.EditarColunista({
     nome,
     foto,
     id_colunista,
   });
-
-  return post;
 }
 
 async function ExcluirColunista({ id_colunista }) {
@@ -60,14 +55,13 @@ async function ExcluirColunista({ id_colunista }) {
     throw new Error("Colunista inválido");
   }
 
-  const colunistaExistente = await repoColunistas.PegarColunistas(id_colunista);
+  const colunistaExistente = await repoColunistas.PegarColunistaPorId(id_colunista);
 
   if (!colunistaExistente) {
     throw new Error("Colunista não encontrado");
   }
 
-  const usuario = await repoColunistas.ExcluirColunista({ id_colunista });
-  return usuario;
+  return await repoColunistas.ExcluirColunista({ id_colunista });
 }
 
 /* =========================
@@ -79,8 +73,7 @@ async function PegarPosts(id_colunista) {
     throw new Error("Colunista inválido");
   }
 
-  const post = await repoColunistas.PegarPosts(id_colunista);
-  return post;
+  return await repoColunistas.PegarPosts(id_colunista);
 }
 
 async function ListarPosts(id_colunista) {
@@ -88,8 +81,7 @@ async function ListarPosts(id_colunista) {
     throw new Error("Colunista inválido");
   }
 
-  const post = await repoColunistas.ListarPosts(id_colunista);
-  return post;
+  return await repoColunistas.ListarPosts(id_colunista);
 }
 
 async function InserirPost({ titulo, texto, foto, id_colunista }) {
@@ -109,14 +101,12 @@ async function InserirPost({ titulo, texto, foto, id_colunista }) {
     throw new Error("Foto inválida");
   }
 
-  const post = await repoColunistas.InserirPost({
+  return await repoColunistas.InserirPost({
     titulo,
     texto,
     foto,
     id_colunista,
   });
-
-  return post;
 }
 
 async function EditarPost({
@@ -146,15 +136,13 @@ async function EditarPost({
     throw new Error("Foto inválida");
   }
 
-  const post = await repoColunistas.EditarPost({
+  return await repoColunistas.EditarPost({
     id_colunista,
     id_post_colunista,
     titulo,
     texto,
     foto,
   });
-
-  return post;
 }
 
 async function ExcluirPost({ id_post_colunista, id_colunista }) {
@@ -166,12 +154,10 @@ async function ExcluirPost({ id_post_colunista, id_colunista }) {
     throw new Error("Post inválido");
   }
 
-  const post = await repoColunistas.ExcluirPost({
+  return await repoColunistas.ExcluirPost({
     id_post_colunista,
     id_colunista,
   });
-
-  return post;
 }
 
 export default {
