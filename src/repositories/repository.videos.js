@@ -25,4 +25,16 @@ async function EditarVideo({ id_video, video_url }) {
   return result[0] || null;
 }
 
-export default { PegarVideo, EditarVideo, PostarVideo };
+async function ListarVideos() {
+  const sql = `
+    SELECT *
+    FROM videos
+    ORDER BY id_video DESC
+  `;
+
+  const { rows } = await db.query(sql);
+  return rows;
+}
+
+
+export default { PegarVideo, EditarVideo, PostarVideo, ListarVideos };

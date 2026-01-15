@@ -85,6 +85,7 @@ async function PostsId(req, res) {
   }
 }
 
+
 async function Posts(req, res) {
   try {
     const id_usuario = req.id_usuario;
@@ -103,6 +104,7 @@ async function Posts(req, res) {
 async function PostsUsuarios(req, res) {
   try {
     const posts = await servicePosts.PostsUsuarios();
+    
     return res.status(200).json(posts);
   } catch (error) {
     console.error(error);

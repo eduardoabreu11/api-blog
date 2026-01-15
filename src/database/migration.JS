@@ -94,6 +94,11 @@ async function migrate() {
     );
   `);
 
+  await db.query(`
+  ALTER TABLE banners
+  ADD COLUMN IF NOT EXISTS banner_mobile TEXT;
+`);
+
   console.log("✅ Migrations executadas com sucesso");
   process.exit();
 }
