@@ -27,6 +27,16 @@ async function PegarVideos(req, res) {
   }
 }
 
+async function ListarVideos(req, res) {
+  try {
+    const videos = await serviceVideos.ListarVideos();
+    return res.status(200).json(videos);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Erro ao buscar vídeos" });
+  }
+}
+
 async function PostarVideo(req, res) {
   try {
     let video_url = null;
@@ -88,4 +98,5 @@ export default {
   PegarVideos,
   EditarVideos,
   PostarVideo,
+  ListarVideos
 };

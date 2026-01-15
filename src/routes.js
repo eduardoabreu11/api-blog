@@ -46,7 +46,8 @@ router.get("/banners", controllerBanners.ListarBanners);
 // video
 router.get("/videos/:id_video",  controllerVideos.PegarVideos); 
 router.post("/videos", jwt.ValidateJwt, uploadVideo.single("video_url"), controllerVideos.PostarVideo); 
-router.put("/videos/:id_video", jwt.ValidateJwt, uploadVideo.single("video_url"), controllerVideos.EditarVideos); 
+router.put("/videos/:id_video", jwt.ValidateJwt, uploadVideo.single("video_url"), controllerVideos.EditarVideos);
+router.get("/videos", controllerVideos.ListarVideos); 
 
 
 // Colunistas
