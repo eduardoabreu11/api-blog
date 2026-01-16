@@ -1,5 +1,4 @@
 import "dotenv/config";
-import "./database/migration.js";
 
 import express from "express";
 import cors from "cors";
@@ -28,7 +27,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// 🔥 preflight universal (Express 5 compatible)
 app.use((req, res, next) => {
   if (req.method === "OPTIONS") {
     return cors(corsOptions)(req, res, next);
@@ -36,11 +34,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// arquivos públicos
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/uploads_videos", express.static(path.join(__dirname, "../uploads_videos")));
 
-// rotas da API
 app.use(router);
 
 const PORT = process.env.PORT || 3000;
