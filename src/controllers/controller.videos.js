@@ -34,7 +34,7 @@ async function PostarVideo(req, res) {
       ? await uploadToCloudinary(capaFile, "capas")
       : null;
 
-    const video = await serviceVideos.PostarVideos({
+    const video = await serviceVideos.PostarVideo({
       video_url: videoUpload.secure_url,
       capa_video: capaUpload?.secure_url || null
     });
