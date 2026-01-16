@@ -5,22 +5,32 @@ import db from "../database/postgresql.js";
  */
 async function PegarBanner(id_banner) {
   const sql = `
-    SELECT id_banner, banner, tipo
-      FROM banners
-     WHERE id_banner = $1
+    SELECT
+      id_banner,
+      banner,
+      banner_mobile,
+      tipo
+    FROM banners
+    WHERE id_banner = $1
   `;
   const { rows } = await db.query(sql, [id_banner]);
   return rows[0] || null;
 }
 
+
 async function ListarBanners() {
   const sql = `
-    SELECT id_banner, banner, tipo
-      FROM banners
+    SELECT
+      id_banner,
+      banner,
+      banner_mobile,
+      tipo
+    FROM banners
   `;
   const { rows } = await db.query(sql);
   return rows;
 }
+
 
 /**
  * Inserir banner
