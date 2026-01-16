@@ -31,21 +31,13 @@ async function InserirBanner({ banner, banner_mobile, tipo }) {
 }
 
 
-async function EditarBanner({ id_banner, foto, tipo }) {
+async function EditarBanner({ id_banner, banner, banner_mobile, tipo }) {
   if (!id_banner) {
     throw new Error("ID do banner é obrigatório");
   }
 
   if (isNaN(id_banner)) {
     throw new Error("ID do banner inválido");
-  }
-
-  if (!foto) {
-    throw new Error("A foto do banner é obrigatória");
-  }
-
-  if (!tipo) {
-    throw new Error("O tipo do banner é obrigatório");
   }
 
   const bannerExistente = await repoBanners.PegarBanner(id_banner);
@@ -56,10 +48,12 @@ async function EditarBanner({ id_banner, foto, tipo }) {
 
   return await repoBanners.EditarBanner({
     id_banner,
-    foto,
+    banner,
+    banner_mobile,
     tipo,
   });
 }
+
 
 export default {
   PegarBanner,

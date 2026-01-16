@@ -40,16 +40,23 @@ async function InserirBanner({ banner, banner_mobile, tipo }) {
 /**
  * Editar banner
  */
-async function EditarBanner({ id_banner, foto, tipo }) {
+async function EditarBanner({ id_banner, banner, banner_mobile, tipo }) {
   const sql = `
     UPDATE banners
-       SET banner = COALESCE($1, banner),
-           tipo   = COALESCE($2, tipo)
-     WHERE id_banner = $3
-     RETURNING id_banner, banner, tipo
+       SET banner        = COALESCE($1, banner),
+           banner_mobile = COALESCE($2, banner_mobile),
+           tipo          = COALESCE($3, tipo)
+     WHERE id_banner = $4
+     RETURNING *
   `;
 
-  const { rows } = await db.query(sql, [foto, tipo, id_banner]);
+  const { rows } = await db.query(sql, [
+    banner,
+    banner_mobile,
+    tipo,
+    id_banner
+  ]);
+
   return rows[0] || null;
 }
 

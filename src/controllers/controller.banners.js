@@ -68,21 +68,30 @@ async function EditarBanner(req, res) {
     const { id_banner } = req.params;
     const { tipo } = req.body;
 
-    let foto = null;
+    let banner = null;
+    let banner_mobile = null;
 
-    if (req.file) {
-      const upload = await uploadToCloudinary(req.file, "banners");
-      foto = upload.secure_url;
+    if (req.files?.banner) {
+      const upload = await uploadToCloudinary(req.files.banner[0], "banners");
+      banner = upload.secure_url;
+    }
+
+    if (req.files?.banner_mobile) {
+      const upload = await uploadToCloudinary(req.files.banner_mobile[0], "banners");
+      banner_mobile = upload.secure_url;
     }
 
     const bannerAtualizado = await serviceBanners.EditarBanner({
       id_banner,
-      foto,
+      banner,
+      banner_mobile,
       tipo,
     });
 
     return res.status(200).json(bannerAtualizado);
   } catch (err) {
+    console.error(err);
+
     if (
       err.message === "ID do banner inválido" ||
       err.message === "ID do banner é obrigatório"
@@ -94,13 +103,10 @@ async function EditarBanner(req, res) {
       return res.status(404).json({ error: err.message });
     }
 
-    if (err.message === "Imagem inválida") {
-      return res.status(400).json({ error: err.message });
-    }
-
     return res.status(500).json({ error: "Erro ao editar banner" });
   }
 }
+
 
 export default {
   EditarBanner,
