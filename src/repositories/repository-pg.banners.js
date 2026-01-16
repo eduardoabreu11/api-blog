@@ -25,16 +25,17 @@ async function ListarBanners() {
 /**
  * Inserir banner
  */
-async function InserirBanner(fotoUrl) {
+async function InserirBanner({ banner, banner_mobile, tipo }) {
   const sql = `
-    INSERT INTO banners (banner)
-    VALUES ($1)
-    RETURNING id_banner, banner, tipo
+    INSERT INTO banners (banner, banner_mobile, tipo)
+    VALUES ($1, $2, $3)
+    RETURNING *
   `;
 
-  const { rows } = await db.query(sql, [fotoUrl]);
+  const { rows } = await db.query(sql, [banner, banner_mobile, tipo]);
   return rows[0];
 }
+
 
 /**
  * Editar banner

@@ -35,24 +35,30 @@ async function ListarBanners(req, res) {
 
 async function InserirBanner(req, res) {
   try {
-    let foto = null;
+    const { tipo } = req.body;
 
-    if (req.file) {
-      const upload = await uploadToCloudinary(req.file, "banners");
-      foto = upload.secure_url;
+    let banner = null;
+    let banner_mobile = null;
+
+    if (req.files?.banner) {
+      const upload = await uploadToCloudinary(req.files.banner[0], "banners");
+      banner = upload.secure_url;
     }
 
-    const banner = await serviceBanners.InserirBanner(foto);
+    if (req.files?.banner_mobile) {
+      const upload = await uploadToCloudinary(req.files.banner_mobile[0], "banners");
+      banner_mobile = upload.secure_url;
+    }
 
-    return res.status(201).json(banner);
+    const novo = await serviceBanners.InserirBanner({
+      banner,
+      banner_mobile,
+      tipo
+    });
+
+    return res.status(201).json(novo);
   } catch (err) {
-    if (
-      err.message === "Imagem inválida" ||
-      err.message === "Imagem é obrigatória"
-    ) {
-      return res.status(400).json({ error: err.message });
-    }
-
+    console.error(err);
     return res.status(500).json({ error: "Erro ao inserir banner" });
   }
 }

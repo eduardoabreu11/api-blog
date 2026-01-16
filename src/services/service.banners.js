@@ -22,17 +22,14 @@ async function ListarBanners() {
   return await repoBanners.ListarBanners();
 }
 
-async function InserirBanner(fotoUrl) {
-  if (!fotoUrl) {
-    throw new Error("A foto do banner é obrigatória");
-  }
+async function InserirBanner({ banner, banner_mobile, tipo }) {
+  if (!banner) throw new Error("Banner desktop obrigatório");
+  if (!banner_mobile) throw new Error("Banner mobile obrigatório");
+  if (!tipo) throw new Error("Tipo obrigatório");
 
-  if (typeof fotoUrl !== "string") {
-    throw new Error("Formato inválido da foto");
-  }
-
-  return await repoBanners.InserirBanner(fotoUrl);
+  return repoBanners.InserirBanner({ banner, banner_mobile, tipo });
 }
+
 
 async function EditarBanner({ id_banner, foto, tipo }) {
   if (!id_banner) {
