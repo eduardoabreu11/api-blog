@@ -21,22 +21,38 @@ async function PegarVideoAtivo(req, res) {
 }
 
 async function PostarVideo(req, res) {
-  let video_url = null;
-  let capa_video = null;
+  try {
+    let video_url = null;
+    let capa_video = null;
 
-  if (req.files?.video) {
-    const upload = await uploadToCloudinary(req.files.video[0], "videos");
-    video_url = upload.secure_url;
+    if (req.files?.video) {
+      const upload = await uploadToCloudinary(
+        req.files.video[0],
+        "videos"
+      );
+      video_url = upload.secure_url;
+    }
+
+    if (req.files?.capa_video) {
+      const upload = await uploadToCloudinary(
+        req.files.capa_video[0],
+        "capas_videos"
+      );
+      capa_video = upload.secure_url;
+    }
+
+    const video = await serviceVideos.PostarVideos({
+      video_url,
+      capa_video
+    });
+
+    return res.status(201).json(video);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Erro ao postar vídeo" });
   }
-
-  if (req.files?.capa_video) {
-    const upload = await uploadToCloudinary(req.files.capa_video[0], "capas");
-    capa_video = upload.secure_url;
-  }
-
-  const video = await serviceVideos.PostarVideo({ video_url, capa_video });
-  res.status(201).json(video);
 }
+
 
 async function EditarVideos(req, res) {
   const video = await serviceVideos.EditarVideo({
