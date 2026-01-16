@@ -1,5 +1,5 @@
 import "dotenv/config";
-import "./database/migration.js"; // 🚀 roda migrations automaticamente no boot
+import "./database/migration.JS"; // 🚀 roda migrations automaticamente no boot
 
 import express from "express";
 import cors from "cors";
