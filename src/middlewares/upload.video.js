@@ -4,20 +4,21 @@ const storage = multer.memoryStorage();
 
 const uploadVideo = multer({
   storage,
-  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB
+  limits: { fileSize: 100 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    // vídeo
+
+    // 🎥 vídeo
     if (
-      file.fieldname === "video_url" &&
+      file.fieldname === "video" &&
       /^video\/(mp4|mov|webm|x-matroska)$/.test(file.mimetype)
     ) {
       return cb(null, true);
     }
 
-    // capa do vídeo
+    // 🖼️ capa do vídeo
     if (
       file.fieldname === "capa_video" &&
-      /^image\/(jpeg|png|webp|jpg)$/.test(file.mimetype)
+      /^image\/(jpeg|png|jpg|webp)$/.test(file.mimetype)
     ) {
       return cb(null, true);
     }

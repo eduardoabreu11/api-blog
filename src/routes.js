@@ -73,16 +73,10 @@ router.get("/videos/:id_video", controllerVideos.PegarVideos);
 router.post(
   "/videos",
   jwt.ValidateJwt,
-  (req, res, next) => {
-    uploadVideo.single("video")(req, res, err => {
-      if (err) return next(err);
-
-      upload.single("capa_video")(req, res, err => {
-        if (err) return next(err);
-        next();
-      });
-    });
-  },
+  uploadVideo.fields([
+    { name: "video", maxCount: 1 },
+    { name: "capa_video", maxCount: 1 }
+  ]),
   controllerVideos.PostarVideo
 );
 
