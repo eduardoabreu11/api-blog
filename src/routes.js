@@ -66,10 +66,34 @@ router.put(
 
 
 // video
-router.get("/videos/:id_video",  controllerVideos.PegarVideos); 
-router.post("/videos", jwt.ValidateJwt, uploadVideo.single("video_url"), controllerVideos.PostarVideo); 
-router.put("/videos/:id_video", jwt.ValidateJwt, uploadVideo.single("video_url"), controllerVideos.EditarVideos);
-router.get("/videos", controllerVideos.ListarVideos); 
+router.get("/videos", controllerVideos.ListarVideos);
+router.get("/videos/ativo", controllerVideos.PegarVideoAtivo);
+router.get("/videos/:id_video", controllerVideos.PegarVideos);
+
+router.post(
+  "/videos",
+  jwt.ValidateJwt,
+  uploadVideo.fields([
+    { name: "video", maxCount: 1 },
+    { name: "capa_video", maxCount: 1 }
+  ]),
+  controllerVideos.PostarVideo
+);
+
+router.put(
+  "/videos/:id_video",
+  jwt.ValidateJwt,
+  uploadVideo.single("video"),
+  controllerVideos.EditarVideos
+);
+
+router.put(
+  "/videos/:id_video/ativar",
+  jwt.ValidateJwt,
+  controllerVideos.AtivarVideo
+);
+
+
 
 
 // Colunistas

@@ -1,102 +1,62 @@
 import serviceVideos from "../services/service.videos.js";
 import { uploadToCloudinary } from "../services/cloudinary.service.js";
 
-/* =========================
-   VÍDEOS
-========================= */
+async function ListarVideos(req, res) {
+  const videos = await serviceVideos.ListarVideos();
+  res.json(videos);
+}
 
 async function PegarVideos(req, res) {
   try {
-    const { id_video } = req.params;
-
-    const video = await serviceVideos.PegarVideo(id_video);
-
-    if (!video) {
-      return res.status(404).json({ error: "Vídeo não encontrado" });
-    }
-
-    return res.status(200).json(video);
-  } catch (error) {
-    console.error(error);
-
-    if (error.message === "Vídeo inválido") {
-      return res.status(400).json({ error: error.message });
-    }
-
-    return res.status(500).json({ error: "Erro ao buscar vídeo" });
+    const video = await serviceVideos.PegarVideo(req.params.id_video);
+    res.json(video);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 }
 
-async function ListarVideos(req, res) {
-  try {
-    const videos = await serviceVideos.ListarVideos();
-    return res.status(200).json(videos);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Erro ao buscar vídeos" });
-  }
+async function PegarVideoAtivo(req, res) {
+  const video = await serviceVideos.PegarVideoAtivo();
+  res.json(video);
 }
 
 async function PostarVideo(req, res) {
-  try {
-    let video_url = null;
+  let video_url = null;
+  let capa_video = null;
 
-    if (req.file) {
-      const upload = await uploadToCloudinary(req.file, "videos");
-      video_url = upload.secure_url;
-    }
-
-    const video = await serviceVideos.PostarVideos(video_url);
-
-    return res.status(201).json(video);
-  } catch (error) {
-    console.error(error);
-
-    if (
-      error.message === "URL do vídeo é obrigatória" ||
-      error.message === "Vídeo inválido"
-    ) {
-      return res.status(400).json({ error: error.message });
-    }
-
-    return res.status(500).json({ error: "Erro ao postar vídeo" });
+  if (req.files?.video) {
+    const upload = await uploadToCloudinary(req.files.video[0], "videos");
+    video_url = upload.secure_url;
   }
+
+  if (req.files?.capa_video) {
+    const upload = await uploadToCloudinary(req.files.capa_video[0], "capas");
+    capa_video = upload.secure_url;
+  }
+
+  const video = await serviceVideos.PostarVideo({ video_url, capa_video });
+  res.status(201).json(video);
 }
 
 async function EditarVideos(req, res) {
-  try {
-    const { id_video } = req.params;
-    let video_url = null;
+  const video = await serviceVideos.EditarVideo({
+    id_video: req.params.id_video,
+    video_url: req.file ? (await uploadToCloudinary(req.file, "videos")).secure_url : null
+  });
 
-    if (req.file) {
-      const upload = await uploadToCloudinary(req.file, "videos");
-      video_url = upload.secure_url;
-    }
+  res.json(video);
+}
 
-    const videoAtualizado = await serviceVideos.EditarVideo({
-      id_video,
-      video_url,
-    });
-
-    return res.status(200).json(videoAtualizado);
-  } catch (error) {
-    console.error(error);
-
-    if (error.message === "Vídeo inválido") {
-      return res.status(400).json({ error: error.message });
-    }
-
-    if (error.message === "Vídeo não encontrado") {
-      return res.status(404).json({ error: error.message });
-    }
-
-    return res.status(500).json({ error: "Erro ao editar vídeo" });
-  }
+async function AtivarVideo(req, res) {
+  await serviceVideos.AtivarVideo(req.params.id_video);
+  res.json({ ok: true });
 }
 
 export default {
+  ListarVideos,
   PegarVideos,
-  EditarVideos,
+  PegarVideoAtivo,
   PostarVideo,
-  ListarVideos
+  EditarVideos,
+  AtivarVideo
 };
