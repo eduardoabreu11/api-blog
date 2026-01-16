@@ -35,11 +35,33 @@ router.get("/posts/:id_post", controllerPosts.IdPost);
 
 
 
-// banner
-router.get("/banners/:id_banner",  controllerBanners.PegarBanner); 
-router.post("/banners",jwt.ValidateJwt, upload.single("foto"), controllerBanners.InserirBanner); 
-router.put("/banners/:id_banner", jwt.ValidateJwt, upload.single("foto"), controllerBanners.EditarBanner);
-router.get("/banners", controllerBanners.ListarBanners); 
+// =========================
+// BANNERS
+// =========================
+
+router.get("/banners/:id_banner", controllerBanners.PegarBanner);
+
+router.get("/banners", controllerBanners.ListarBanners);
+
+router.post(
+  "/banners",
+  jwt.ValidateJwt,
+  upload.fields([
+    { name: "banner", maxCount: 1 },
+    { name: "banner_mobile", maxCount: 1 }
+  ]),
+  controllerBanners.InserirBanner
+);
+
+router.put(
+  "/banners/:id_banner",
+  jwt.ValidateJwt,
+  upload.fields([
+    { name: "banner", maxCount: 1 },
+    { name: "banner_mobile", maxCount: 1 }
+  ]),
+  controllerBanners.EditarBanner
+);
 
 
 
