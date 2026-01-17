@@ -1,5 +1,6 @@
 import serviceVideos from "../services/service.videos.js";
 import { uploadToCloudinary } from "../services/cloudinary.service.js";
+import cloudinary from "../config/cloudinary.js";
 
 /* =========================
    LISTAR
@@ -54,16 +55,21 @@ async function PostarVideo(req, res) {
     }
 
     const videoUpload = await uploadToCloudinary(videoFile, "videos");
+
     let capaUrl = null;
+    let capaPublicId = null;
 
     if (capaFile) {
       const capaUpload = await uploadToCloudinary(capaFile, "videos/capas");
       capaUrl = capaUpload.secure_url;
+      capaPublicId = capaUpload.public_id;
     }
 
     const novoVideo = await serviceVideos.PostarVideo({
       video_url: videoUpload.secure_url,
-      capa_video: capaUrl
+      video_public_id: videoUpload.public_id,
+      capa_video: capaUrl,
+      capa_public_id: capaPublicId
     });
 
     return res.status(201).json(novoVideo);
@@ -127,6 +133,34 @@ async function EditarCapa(req, res) {
   }
 }
 
+
+async function ExcluirVideo(req, res) {
+  try {
+    const { id_video } = req.params;
+
+    const video = await serviceVideos.PegarVideo(id_video);
+
+    if (video.video_public_id) {
+      await cloudinary.uploader.destroy(video.video_public_id, {
+        resource_type: "video"
+      });
+    }
+
+    if (video.capa_public_id) {
+      await cloudinary.uploader.destroy(video.capa_public_id, {
+        resource_type: "image"
+      });
+    }
+
+    await serviceVideos.ExcluirVideo(id_video);
+
+    return res.status(204).send();
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Erro ao excluir vídeo" });
+  }
+}
+
 /* =========================
    ATIVAR VÍDEO
 ========================= */
@@ -150,5 +184,6 @@ export default {
   PostarVideo,
   EditarVideo,
   EditarCapa,
-  AtivarVideo
+  AtivarVideo,
+  ExcluirVideo
 };

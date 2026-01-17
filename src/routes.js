@@ -99,6 +99,12 @@ router.put(
   controllerVideos.EditarCapa
 );
 
+router.delete(
+  "/videos/:id_video",
+  jwt.ValidateJwt,
+  controllerVideos.ExcluirVideo
+)
+
 
 
 // Colunistas

@@ -19,10 +19,24 @@ async function PegarVideoAtivo() {
   return repoVideos.PegarVideoAtivo();
 }
 
-async function PostarVideo({ video_url, capa_video }) {
-  if (!video_url) throw new Error("Vídeo obrigatório");
-  return repoVideos.PostarVideo({ video_url, capa_video });
+async function PostarVideo({
+  video_url,
+  video_public_id,
+  capa_video,
+  capa_public_id
+}) {
+  if (!video_url || !video_public_id) {
+    throw new Error("Vídeo obrigatório");
+  }
+
+  return repoVideos.PostarVideo({
+    video_url,
+    video_public_id,
+    capa_video,
+    capa_public_id
+  });
 }
+
 
 async function EditarVideo({ id_video, video_url = null, capa_video = null }) {
   if (!id_video || isNaN(id_video)) {
@@ -41,8 +55,17 @@ async function AtivarVideo(id_video) {
     throw new Error("Vídeo inválido");
   }
 
+
   await repoVideos.AtivarVideo(id_video);
 }
+
+async function ExcluirVideo(id_video) {
+  await db.query(`
+    DELETE FROM videos
+    WHERE id_video = $1
+  `, [id_video]);
+}
+
 
 export default {
   ListarVideos,
@@ -50,5 +73,6 @@ export default {
   PegarVideoAtivo,
   PostarVideo,
   EditarVideo,
-  AtivarVideo
+  AtivarVideo,
+  ExcluirVideo
 };

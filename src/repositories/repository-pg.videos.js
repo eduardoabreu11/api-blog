@@ -34,15 +34,26 @@ async function PegarVideoAtivo() {
 }
 
 /* POSTAR */
-async function PostarVideo({ video_url, capa_video }) {
+async function PostarVideo({
+  video_url,
+  video_public_id,
+  capa_video,
+  capa_public_id
+}) {
   const { rows } = await db.query(`
-    INSERT INTO videos (video_url, capa_video)
-    VALUES ($1, $2)
+    INSERT INTO videos (
+      video_url,
+      video_public_id,
+      capa_video,
+      capa_public_id
+    )
+    VALUES ($1, $2, $3, $4)
     RETURNING *
-  `, [video_url, capa_video]);
+  `, [video_url, video_public_id, capa_video, capa_public_id]);
 
   return rows[0];
 }
+
 
 /* EDITAR (VÍDEO E/OU CAPA) */
 async function EditarVideo({ id_video, video_url, capa_video }) {
@@ -57,6 +68,14 @@ async function EditarVideo({ id_video, video_url, capa_video }) {
   return rows[0] || null;
 }
 
+async function ExcluirVideo(id_video) {
+  await db.query(`
+    DELETE FROM videos
+    WHERE id_video = $1
+  `, [id_video]);
+}
+
+
 /* ATIVAR VÍDEO */
 async function AtivarVideo(id_video) {
   await db.query(`UPDATE videos SET ativo = false`);
@@ -69,5 +88,6 @@ export default {
   PegarVideoAtivo,
   PostarVideo,
   EditarVideo,
-  AtivarVideo
+  AtivarVideo,
+  ExcluirVideo
 };
