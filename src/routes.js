@@ -64,11 +64,10 @@ router.put(
 );
 
 
-
 // video
 router.get("/videos", controllerVideos.ListarVideos);
 router.get("/videos/ativo", controllerVideos.PegarVideoAtivo);
-router.get("/videos/:id_video", controllerVideos.PegarVideos);
+router.get("/videos/:id_video", controllerVideos.PegarVideo);
 
 router.post(
   "/videos",
@@ -80,13 +79,11 @@ router.post(
   controllerVideos.PostarVideo
 );
 
-
-
 router.put(
   "/videos/:id_video",
   jwt.ValidateJwt,
   uploadVideo.single("video"),
-  controllerVideos.EditarVideos
+  controllerVideos.EditarVideo
 );
 
 router.put(
@@ -95,6 +92,12 @@ router.put(
   controllerVideos.AtivarVideo
 );
 
+router.put(
+  "/videos/:id_video/capa",
+  jwt.ValidateJwt,
+  uploadVideo.single("capa_video"),
+  controllerVideos.EditarCapa
+);
 
 
 

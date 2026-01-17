@@ -1,73 +1,154 @@
 import serviceVideos from "../services/service.videos.js";
 import { uploadToCloudinary } from "../services/cloudinary.service.js";
 
+/* =========================
+   LISTAR
+========================= */
 async function ListarVideos(req, res) {
-  const videos = await serviceVideos.ListarVideos();
-  res.json(videos);
-}
-
-async function PegarVideos(req, res) {
   try {
-    const video = await serviceVideos.PegarVideo(req.params.id_video);
-    res.json(video);
+    const videos = await serviceVideos.ListarVideos();
+    return res.status(200).json(videos);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    return res.status(500).json({ error: "Erro ao listar vídeos" });
   }
 }
 
-async function PegarVideoAtivo(req, res) {
-  const video = await serviceVideos.PegarVideoAtivo();
-  res.json(video);
+/* =========================
+   PEGAR POR ID
+========================= */
+async function PegarVideo(req, res) {
+  try {
+    const { id_video } = req.params;
+    const video = await serviceVideos.PegarVideo(id_video);
+    return res.status(200).json(video);
+  } catch (err) {
+    if (err.message === "Vídeo inválido" || err.message === "Vídeo não encontrado") {
+      return res.status(404).json({ error: err.message });
+    }
+    return res.status(500).json({ error: "Erro ao buscar vídeo" });
+  }
 }
 
+/* =========================
+   PEGAR VÍDEO ATIVO
+========================= */
+async function PegarVideoAtivo(req, res) {
+  try {
+    const video = await serviceVideos.PegarVideoAtivo();
+    return res.status(200).json(video);
+  } catch (err) {
+    return res.status(500).json({ error: "Erro ao buscar vídeo ativo" });
+  }
+}
+
+/* =========================
+   POSTAR NOVO VÍDEO
+========================= */
 async function PostarVideo(req, res) {
   try {
     const videoFile = req.files?.video?.[0];
-    const capaFile  = req.files?.capa_video?.[0];
+    const capaFile = req.files?.capa_video?.[0];
 
     if (!videoFile) {
       return res.status(400).json({ error: "Vídeo obrigatório" });
     }
 
     const videoUpload = await uploadToCloudinary(videoFile, "videos");
-    const capaUpload = capaFile
-      ? await uploadToCloudinary(capaFile, "capas")
-      : null;
+    let capaUrl = null;
 
-    const video = await serviceVideos.PostarVideo({
+    if (capaFile) {
+      const capaUpload = await uploadToCloudinary(capaFile, "videos/capas");
+      capaUrl = capaUpload.secure_url;
+    }
+
+    const novoVideo = await serviceVideos.PostarVideo({
       video_url: videoUpload.secure_url,
-      capa_video: capaUpload?.secure_url || null
+      capa_video: capaUrl
     });
 
-    return res.status(201).json(video);
+    return res.status(201).json(novoVideo);
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: "Erro ao postar vídeo" });
   }
 }
 
+/* =========================
+   EDITAR VÍDEO
+========================= */
+async function EditarVideo(req, res) {
+  try {
+    const { id_video } = req.params;
 
+    if (!req.file) {
+      return res.status(400).json({ error: "Arquivo de vídeo obrigatório" });
+    }
 
+    const upload = await uploadToCloudinary(req.file, "videos");
 
-async function EditarVideos(req, res) {
-  const video = await serviceVideos.EditarVideo({
-    id_video: req.params.id_video,
-    video_url: req.file ? (await uploadToCloudinary(req.file, "videos")).secure_url : null
-  });
+    const videoAtualizado = await serviceVideos.EditarVideo({
+      id_video,
+      video_url: upload.secure_url
+    });
 
-  res.json(video);
+    return res.status(200).json(videoAtualizado);
+  } catch (err) {
+    if (err.message === "Vídeo inválido") {
+      return res.status(400).json({ error: err.message });
+    }
+    return res.status(500).json({ error: "Erro ao editar vídeo" });
+  }
 }
 
+/* =========================
+   EDITAR CAPA (🔥 NOVO)
+========================= */
+async function EditarCapa(req, res) {
+  try {
+    const { id_video } = req.params;
+
+    if (!req.file) {
+      return res.status(400).json({ error: "Capa obrigatória" });
+    }
+
+    const upload = await uploadToCloudinary(req.file, "videos/capas");
+
+    const atualizado = await serviceVideos.EditarVideo({
+      id_video,
+      capa_video: upload.secure_url
+    });
+
+    return res.status(200).json(atualizado);
+  } catch (err) {
+    if (err.message === "Vídeo inválido") {
+      return res.status(400).json({ error: err.message });
+    }
+    return res.status(500).json({ error: "Erro ao editar capa" });
+  }
+}
+
+/* =========================
+   ATIVAR VÍDEO
+========================= */
 async function AtivarVideo(req, res) {
-  await serviceVideos.AtivarVideo(req.params.id_video);
-  res.json({ ok: true });
+  try {
+    const { id_video } = req.params;
+    await serviceVideos.AtivarVideo(id_video);
+    return res.status(204).send();
+  } catch (err) {
+    if (err.message === "Vídeo inválido") {
+      return res.status(400).json({ error: err.message });
+    }
+    return res.status(500).json({ error: "Erro ao ativar vídeo" });
+  }
 }
 
 export default {
   ListarVideos,
-  PegarVideos,
+  PegarVideo,
   PegarVideoAtivo,
   PostarVideo,
-  EditarVideos,
+  EditarVideo,
+  EditarCapa,
   AtivarVideo
 };

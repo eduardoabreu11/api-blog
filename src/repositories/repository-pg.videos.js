@@ -44,7 +44,7 @@ async function PostarVideo({ video_url, capa_video }) {
   return rows[0];
 }
 
-/* EDITAR */
+/* EDITAR (VÍDEO E/OU CAPA) */
 async function EditarVideo({ id_video, video_url, capa_video }) {
   const { rows } = await db.query(`
     UPDATE videos
@@ -71,4 +71,3 @@ export default {
   EditarVideo,
   AtivarVideo
 };
-

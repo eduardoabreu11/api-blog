@@ -5,7 +5,9 @@ async function ListarVideos() {
 }
 
 async function PegarVideo(id_video) {
-  if (!id_video || isNaN(id_video)) throw new Error("Vídeo inválido");
+  if (!id_video || isNaN(id_video)) {
+    throw new Error("Vídeo inválido");
+  }
 
   const video = await repoVideos.PegarVideo(id_video);
   if (!video) throw new Error("Vídeo não encontrado");
@@ -22,14 +24,23 @@ async function PostarVideo({ video_url, capa_video }) {
   return repoVideos.PostarVideo({ video_url, capa_video });
 }
 
-async function EditarVideo({ id_video, video_url, capa_video }) {
-  if (!id_video || isNaN(id_video)) throw new Error("Vídeo inválido");
+async function EditarVideo({ id_video, video_url = null, capa_video = null }) {
+  if (!id_video || isNaN(id_video)) {
+    throw new Error("Vídeo inválido");
+  }
 
-  return repoVideos.EditarVideo({ id_video, video_url, capa_video });
+  return repoVideos.EditarVideo({
+    id_video,
+    video_url,
+    capa_video
+  });
 }
 
 async function AtivarVideo(id_video) {
-  if (!id_video || isNaN(id_video)) throw new Error("Vídeo inválido");
+  if (!id_video || isNaN(id_video)) {
+    throw new Error("Vídeo inválido");
+  }
+
   await repoVideos.AtivarVideo(id_video);
 }
 
