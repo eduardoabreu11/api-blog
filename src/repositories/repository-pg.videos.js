@@ -3,7 +3,7 @@ import db from "../database/postgresql.js";
 /* LISTAR TODOS */
 async function ListarVideos() {
   const { rows } = await db.query(`
-    SELECT id_video, video_url, capa_video, ativo
+    SELECT *
     FROM videos
     ORDER BY id_video DESC
   `);
@@ -13,7 +13,7 @@ async function ListarVideos() {
 /* PEGAR POR ID */
 async function PegarVideo(id_video) {
   const { rows } = await db.query(`
-    SELECT id_video, video_url, capa_video, ativo
+    SELECT *
     FROM videos
     WHERE id_video = $1
   `, [id_video]);
@@ -21,19 +21,18 @@ async function PegarVideo(id_video) {
   return rows[0] || null;
 }
 
-/* PEGAR VÍDEO DA HOME */
+/* PEGAR ATIVO */
 async function PegarVideoAtivo() {
   const { rows } = await db.query(`
-    SELECT id_video, video_url, capa_video
+    SELECT *
     FROM videos
     WHERE ativo = true
     LIMIT 1
   `);
-
   return rows[0] || null;
 }
 
-/* POSTAR */
+/* INSERIR */
 async function PostarVideo({
   video_url,
   video_public_id,
@@ -54,20 +53,34 @@ async function PostarVideo({
   return rows[0];
 }
 
-
-/* EDITAR (VÍDEO E/OU CAPA) */
-async function EditarVideo({ id_video, video_url, capa_video }) {
+/* EDITAR */
+async function EditarVideo({
+  id_video,
+  video_url,
+  video_public_id,
+  capa_video,
+  capa_public_id
+}) {
   const { rows } = await db.query(`
     UPDATE videos
-       SET video_url  = COALESCE($1, video_url),
-           capa_video = COALESCE($2, capa_video)
-     WHERE id_video = $3
+       SET video_url = COALESCE($1, video_url),
+           video_public_id = COALESCE($2, video_public_id),
+           capa_video = COALESCE($3, capa_video),
+           capa_public_id = COALESCE($4, capa_public_id)
+     WHERE id_video = $5
      RETURNING *
-  `, [video_url, capa_video, id_video]);
+  `, [
+    video_url,
+    video_public_id,
+    capa_video,
+    capa_public_id,
+    id_video
+  ]);
 
   return rows[0] || null;
 }
 
+/* EXCLUIR */
 async function ExcluirVideo(id_video) {
   await db.query(`
     DELETE FROM videos
@@ -75,11 +88,14 @@ async function ExcluirVideo(id_video) {
   `, [id_video]);
 }
 
-
-/* ATIVAR VÍDEO */
+/* ATIVAR */
 async function AtivarVideo(id_video) {
   await db.query(`UPDATE videos SET ativo = false`);
-  await db.query(`UPDATE videos SET ativo = true WHERE id_video = $1`, [id_video]);
+  await db.query(`
+    UPDATE videos
+       SET ativo = true
+     WHERE id_video = $1
+  `, [id_video]);
 }
 
 export default {
@@ -88,6 +104,6 @@ export default {
   PegarVideoAtivo,
   PostarVideo,
   EditarVideo,
-  AtivarVideo,
-  ExcluirVideo
+  ExcluirVideo,
+  AtivarVideo
 };

@@ -16,30 +16,33 @@ async function migrate() {
     CREATE TABLE IF NOT EXISTS banners (
       id_banner SERIAL PRIMARY KEY,
       banner TEXT,
-      tipo TEXT
+      tipo TEXT,
+      banner_mobile TEXT
     );
-  `);
-
-  await db.query(`
-    ALTER TABLE banners
-    ADD COLUMN IF NOT EXISTS banner_mobile TEXT;
   `);
 
   await db.query(`
     CREATE TABLE IF NOT EXISTS videos (
       id_video SERIAL PRIMARY KEY,
-      video_url TEXT
+      video_url TEXT,
+      capa_video TEXT,
+      ativo BOOLEAN DEFAULT false,
+
+      -- 🔥 ESSENCIAIS PARA CLOUDINARY
+      video_public_id TEXT,
+      capa_public_id TEXT
     );
   `);
 
+  // 🔁 GARANTIA (caso a tabela já exista)
   await db.query(`
     ALTER TABLE videos
-    ADD COLUMN IF NOT EXISTS ativo BOOLEAN DEFAULT false;
+    ADD COLUMN IF NOT EXISTS video_public_id TEXT;
   `);
 
   await db.query(`
     ALTER TABLE videos
-    ADD COLUMN IF NOT EXISTS capa_video TEXT;
+    ADD COLUMN IF NOT EXISTS capa_public_id TEXT;
   `);
 
   console.log("✅ Migrations executadas com sucesso");
