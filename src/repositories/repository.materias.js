@@ -95,15 +95,17 @@ async function EditarMateria({
   return rows[0] || null;
 }
 
-async function ExcluirMateria({ id_materia }) {
+async function ExcluirMateria(id_materia) {
   const sql = `
     DELETE FROM materias
      WHERE id_materia = $1
   `;
 
   await db.query(sql, [id_materia]);
+
   return { id_materia };
 }
+
 
 /* =========================
    EXPORT

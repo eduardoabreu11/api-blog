@@ -110,13 +110,25 @@ async function EditarMateria(req, res) {
 async function ExcluirMateria(req, res) {
   try {
     const { id_materia } = req.params;
-    const result = await serviceMaterias.ExcluirMateria({ id_materia });
-    return res.status(200).json(result);
+
+    await serviceMaterias.ExcluirMateria(id_materia);
+
+    return res.status(204).send();
   } catch (error) {
     console.error(error);
+
+    if (error.message.includes("ID")) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    if (error.message === "Matéria não encontrada") {
+      return res.status(404).json({ error: error.message });
+    }
+
     return res.status(500).json({ error: "Erro ao excluir matéria" });
   }
 }
+
 
 export default {
   PegarMaterias,
