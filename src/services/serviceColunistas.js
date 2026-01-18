@@ -5,11 +5,11 @@ import repoColunistas from "../repositories/repository-pg.colunistas.js";
 ========================= */
 
 async function PegarColunistas() {
-  return await repoColunistas.PegarColunistas();
+  return repoColunistas.PegarColunistas();
 }
 
 async function ListarColunistas() {
-  return await repoColunistas.ListarColunistas();
+  return repoColunistas.ListarColunistas();
 }
 
 async function InserirColunista({ nome, foto }) {
@@ -18,13 +18,13 @@ async function InserirColunista({ nome, foto }) {
   }
 
   if (!foto || typeof foto !== "string") {
-    throw new Error("Foto do colunista é inválida");
+    throw new Error("Foto do colunista é obrigatória");
   }
 
-  return await repoColunistas.InserirColunista({ nome, foto });
+  return repoColunistas.InserirColunista({ nome, foto });
 }
 
-async function EditarColunista({ nome, foto, id_colunista }) {
+async function EditarColunista({ id_colunista, nome, foto }) {
   if (!id_colunista || isNaN(id_colunista)) {
     throw new Error("Colunista inválido");
   }
@@ -34,20 +34,10 @@ async function EditarColunista({ nome, foto, id_colunista }) {
   }
 
   if (foto !== null && typeof foto !== "string") {
-    throw new Error("Foto do colunista é inválida");
+    throw new Error("Foto inválida");
   }
 
-  const colunistaExistente = await repoColunistas.PegarColunistaPorId(id_colunista);
-
-  if (!colunistaExistente) {
-    throw new Error("Colunista não encontrado");
-  }
-
-  return await repoColunistas.EditarColunista({
-    nome,
-    foto,
-    id_colunista,
-  });
+  return repoColunistas.EditarColunista({ id_colunista, nome, foto });
 }
 
 async function ExcluirColunista({ id_colunista }) {
@@ -55,13 +45,7 @@ async function ExcluirColunista({ id_colunista }) {
     throw new Error("Colunista inválido");
   }
 
-  const colunistaExistente = await repoColunistas.PegarColunistaPorId(id_colunista);
-
-  if (!colunistaExistente) {
-    throw new Error("Colunista não encontrado");
-  }
-
-  return await repoColunistas.ExcluirColunista({ id_colunista });
+  return repoColunistas.ExcluirColunista({ id_colunista });
 }
 
 /* =========================
@@ -73,7 +57,7 @@ async function PegarPosts(id_colunista) {
     throw new Error("Colunista inválido");
   }
 
-  return await repoColunistas.PegarPosts(id_colunista);
+  return repoColunistas.PegarPosts(id_colunista);
 }
 
 async function ListarPosts(id_colunista) {
@@ -81,10 +65,10 @@ async function ListarPosts(id_colunista) {
     throw new Error("Colunista inválido");
   }
 
-  return await repoColunistas.ListarPosts(id_colunista);
+  return repoColunistas.ListarPosts(id_colunista);
 }
 
-async function InserirPost({ titulo, texto, foto, id_colunista }) {
+async function InserirPost({ id_colunista, titulo, texto, foto }) {
   if (!id_colunista || isNaN(id_colunista)) {
     throw new Error("Colunista inválido");
   }
@@ -98,14 +82,14 @@ async function InserirPost({ titulo, texto, foto, id_colunista }) {
   }
 
   if (!foto || typeof foto !== "string") {
-    throw new Error("Foto inválida");
+    throw new Error("Foto é obrigatória");
   }
 
-  return await repoColunistas.InserirPost({
+  return repoColunistas.InserirPost({
+    id_colunista,
     titulo,
     texto,
     foto,
-    id_colunista,
   });
 }
 
@@ -132,11 +116,12 @@ async function EditarPost({
     throw new Error("Texto é obrigatório");
   }
 
-  if (!foto || typeof foto !== "string") {
+  // 🔥 CORREÇÃO DEFINITIVA
+  if (foto !== null && typeof foto !== "string") {
     throw new Error("Foto inválida");
   }
 
-  return await repoColunistas.EditarPost({
+  return repoColunistas.EditarPost({
     id_colunista,
     id_post_colunista,
     titulo,
@@ -145,7 +130,7 @@ async function EditarPost({
   });
 }
 
-async function ExcluirPost({ id_post_colunista, id_colunista }) {
+async function ExcluirPost({ id_colunista, id_post_colunista }) {
   if (!id_colunista || isNaN(id_colunista)) {
     throw new Error("Colunista inválido");
   }
@@ -154,20 +139,17 @@ async function ExcluirPost({ id_post_colunista, id_colunista }) {
     throw new Error("Post inválido");
   }
 
-  return await repoColunistas.ExcluirPost({
-    id_post_colunista,
-    id_colunista,
-  });
+  return repoColunistas.ExcluirPost({ id_colunista, id_post_colunista });
 }
 
 export default {
   PegarColunistas,
+  ListarColunistas,
   InserirColunista,
   EditarColunista,
   ExcluirColunista,
-  ListarColunistas,
-  ListarPosts,
   PegarPosts,
+  ListarPosts,
   InserirPost,
   EditarPost,
   ExcluirPost,
