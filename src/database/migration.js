@@ -81,6 +81,12 @@ async function migrate() {
     ADD COLUMN IF NOT EXISTS imagem_public_id TEXT;
   `);
 
+  // ✅ DATA DO POST
+  await db.query(`
+    ALTER TABLE posts
+    ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();
+  `);
+
   /* =========================
      MATÉRIAS
   ========================= */
@@ -98,6 +104,12 @@ async function migrate() {
   await db.query(`
     ALTER TABLE materias
     ADD COLUMN IF NOT EXISTS imagem_public_id TEXT;
+  `);
+
+  // ✅ DATA DA MATÉRIA
+  await db.query(`
+    ALTER TABLE materias
+    ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();
   `);
 
   /* =========================
@@ -134,6 +146,12 @@ async function migrate() {
   await db.query(`
     ALTER TABLE posts_colunistas
     ADD COLUMN IF NOT EXISTS foto_public_id TEXT;
+  `);
+
+  // ✅ DATA DO POST DO COLUNISTA
+  await db.query(`
+    ALTER TABLE posts_colunistas
+    ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();
   `);
 
   console.log("✅ Migrations executadas com sucesso");

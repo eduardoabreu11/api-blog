@@ -8,7 +8,7 @@ async function PegarMaterias() {
   const sql = `
     SELECT *
       FROM materias
-     ORDER BY id_materia DESC
+     ORDER BY created_at DESC
   `;
 
   const { rows } = await db.query(sql);
@@ -19,7 +19,7 @@ async function ListarMaterias() {
   const sql = `
     SELECT *
       FROM materias
-     ORDER BY id_materia DESC
+     ORDER BY created_at DESC
   `;
 
   const { rows } = await db.query(sql);
@@ -31,7 +31,6 @@ async function PegarMateria(id_materia) {
     SELECT *
       FROM materias
      WHERE id_materia = $1
-     ORDER BY id_materia DESC
   `;
 
   const { rows } = await db.query(sql, [id_materia]);
@@ -43,7 +42,6 @@ async function ListarMateria(id_materia) {
     SELECT *
       FROM materias
      WHERE id_materia = $1
-     ORDER BY id_materia DESC
   `;
 
   const { rows } = await db.query(sql, [id_materia]);
@@ -54,7 +52,7 @@ async function InserirMateria({ titulo, texto, imagem_url, subtitulo }) {
   const sql = `
     INSERT INTO materias (titulo, texto, imagem_url, subtitulo)
     VALUES ($1, $2, $3, $4)
-    RETURNING id_materia, titulo, texto, imagem_url, subtitulo
+    RETURNING id_materia, titulo, texto, imagem_url, subtitulo, created_at
   `;
 
   const { rows } = await db.query(sql, [
@@ -81,7 +79,7 @@ async function EditarMateria({
            imagem_url  = COALESCE($3, imagem_url),
            subtitulo   = COALESCE($4, subtitulo)
      WHERE id_materia = $5
-     RETURNING id_materia, titulo, texto, imagem_url, subtitulo
+     RETURNING id_materia, titulo, texto, imagem_url, subtitulo, created_at
   `;
 
   const { rows } = await db.query(sql, [
@@ -95,21 +93,15 @@ async function EditarMateria({
   return rows[0] || null;
 }
 
-async function ExcluirMateria(id_materia) {
+async function ExcluirMateria({ id_materia }) {
   const sql = `
     DELETE FROM materias
      WHERE id_materia = $1
   `;
 
   await db.query(sql, [id_materia]);
-
   return { id_materia };
 }
-
-
-/* =========================
-   EXPORT
-========================= */
 
 export default {
   PegarMateria,

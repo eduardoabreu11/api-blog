@@ -59,23 +59,25 @@ async function Posts(id_usuario) {
   const sql = `
     SELECT *
       FROM posts
-     ORDER BY id_post DESC
+     ORDER BY created_at DESC
   `;
 
   const { rows } = await db.query(sql);
   return rows;
 }
+
 
 async function PostsUsuarios() {
   const sql = `
     SELECT *
       FROM posts
-     ORDER BY id_post DESC
+     ORDER BY created_at DESC
   `;
 
   const { rows } = await db.query(sql);
   return rows;
 }
+
 
 async function IdPost(id_post) {
   const sql = `

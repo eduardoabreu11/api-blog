@@ -71,12 +71,13 @@ async function PegarPosts(id_colunista) {
     SELECT *
       FROM posts_colunistas
      WHERE id_colunista = $1
-     ORDER BY id_post_colunista DESC
+     ORDER BY created_at DESC
   `,
     [id_colunista]
   );
   return rows;
 }
+
 
 async function ListarPosts(id_colunista) {
   const { rows } = await db.query(
@@ -84,12 +85,13 @@ async function ListarPosts(id_colunista) {
     SELECT *
       FROM posts_colunistas
      WHERE id_colunista = $1
-     ORDER BY id_post_colunista DESC
+     ORDER BY created_at DESC
   `,
     [id_colunista]
   );
   return rows;
 }
+
 
 async function InserirPost({ titulo, texto, foto, id_colunista }) {
   const { rows } = await db.query(
