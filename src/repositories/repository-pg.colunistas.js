@@ -68,30 +68,44 @@ async function ExcluirColunista({ id_colunista }) {
 async function PegarPosts(id_colunista) {
   const { rows } = await db.query(
     `
-    SELECT *
-      FROM posts_colunistas
-     WHERE id_colunista = $1
-     ORDER BY created_at DESC
-  `,
+    SELECT
+      p.id_post_colunista,
+      p.titulo,
+      p.texto,
+      p.foto,
+      p.created_at,
+      c.nome AS nome_colunista
+    FROM posts_colunistas p
+    JOIN colunistas c ON c.id_colunista = p.id_colunista
+    WHERE p.id_colunista = $1
+    ORDER BY p.created_at DESC
+    `,
     [id_colunista]
   );
+
   return rows;
 }
-
 
 async function ListarPosts(id_colunista) {
   const { rows } = await db.query(
     `
-    SELECT *
-      FROM posts_colunistas
-     WHERE id_colunista = $1
-     ORDER BY created_at DESC
-  `,
+    SELECT
+      p.id_post_colunista,
+      p.titulo,
+      p.texto,
+      p.foto,
+      p.created_at,
+      c.nome AS nome_colunista
+    FROM posts_colunistas p
+    JOIN colunistas c ON c.id_colunista = p.id_colunista
+    WHERE p.id_colunista = $1
+    ORDER BY p.created_at DESC
+    `,
     [id_colunista]
   );
+
   return rows;
 }
-
 
 async function InserirPost({ titulo, texto, foto, id_colunista }) {
   const { rows } = await db.query(
