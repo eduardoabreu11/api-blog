@@ -32,7 +32,8 @@ router.delete("/posts/:id_post",jwt.ValidateJwt , controllerPosts.Excluir);
 
 router.get("/posts", controllerPosts.PostsUsuarios);
 router.get("/posts/:id_post", controllerPosts.IdPost);
-
+router.patch("/posts/:id_post/config",jwt.ValidateJwt,controllerPosts.Configurar
+);
 
 
 // =========================

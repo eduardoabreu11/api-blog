@@ -71,12 +71,15 @@ async function PostsUsuarios() {
   const sql = `
     SELECT *
       FROM posts
-     ORDER BY created_at DESC
+     WHERE ativo = true
+     ORDER BY ordem ASC NULLS LAST, created_at DESC
+     LIMIT 10
   `;
 
   const { rows } = await db.query(sql);
   return rows;
 }
+
 
 
 async function IdPost(id_post) {
@@ -101,6 +104,20 @@ async function Excluir(id_usuario, id_post) {
   return { id_post };
 }
 
+async function Configurar({ id_post, ativo, ordem }) {
+  const sql = `
+    UPDATE posts
+       SET ativo = COALESCE($1, ativo),
+           ordem = COALESCE($2, ordem)
+     WHERE id_post = $3
+     RETURNING *
+  `;
+
+  const { rows } = await db.query(sql, [ativo, ordem, id_post]);
+  return rows[0];
+}
+
+
 /* =========================
    EXPORT
 ========================= */
@@ -112,5 +129,6 @@ export default {
   Editar,
   Excluir,
   PostsUsuarios,
-  IdPost
+  IdPost,
+  Configurar
 };

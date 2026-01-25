@@ -97,6 +97,25 @@ async function Posts(req, res) {
   }
 }
 
+async function Configurar(req, res) {
+  try {
+    const { id_post } = req.params;
+    const { ativo, ordem } = req.body;
+
+    const post = await servicePosts.Configurar({
+      id_post,
+      ativo,
+      ordem
+    });
+
+    return res.status(200).json(post);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
+}
+
+
 /* =========================
    POSTS PÚBLICOS (BLOG)
 ========================= */
@@ -128,6 +147,8 @@ async function IdPost(req, res) {
   }
 }
 
+
+
 export default {
   Inserir,
   Editar,
@@ -136,4 +157,5 @@ export default {
   PostsId,
   PostsUsuarios,
   IdPost,
+  Configurar
 };

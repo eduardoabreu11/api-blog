@@ -112,7 +112,21 @@ async function Posts(id_usuario) {
 async function PostsUsuarios() {
   const usuario = await repoPosts.PostsUsuarios();
   return usuario;
+  
 }
+
+async function Configurar({ id_post, ativo, ordem }) {
+  if (!id_post || isNaN(id_post)) {
+    throw new Error("Post inválido");
+  }
+
+  return await repoPosts.Configurar({
+    id_post,
+    ativo,
+    ordem
+  });
+}
+
 
 /**
  * Buscar post por ID
@@ -139,4 +153,5 @@ export default {
   PostsId,
   PostsUsuarios,
   IdPost,
+  Configurar
 };
