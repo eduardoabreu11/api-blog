@@ -80,6 +80,18 @@ async function PostsUsuarios() {
   return rows;
 }
 
+async function BuscarPorOrdem(ordem) {
+  const sql = `
+    SELECT id_post
+      FROM posts
+     WHERE ordem = $1
+  `;
+
+  const { rows } = await db.query(sql, [ordem]);
+  return rows[0] || null;
+}
+
+
 
 
 async function IdPost(id_post) {
@@ -130,5 +142,6 @@ export default {
   Excluir,
   PostsUsuarios,
   IdPost,
-  Configurar
+  Configurar, 
+  BuscarPorOrdem
 };

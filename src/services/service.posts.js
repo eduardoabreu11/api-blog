@@ -120,12 +120,27 @@ async function Configurar({ id_post, ativo, ordem }) {
     throw new Error("Post inválido");
   }
 
+  // ✅ VALIDAÇÃO DE ORDEM REPETIDA
+  if (ordem !== null && ordem !== undefined) {
+    const postComMesmaOrdem = await repoPosts.BuscarPorOrdem(ordem);
+
+    if (
+      postComMesmaOrdem &&
+      postComMesmaOrdem.id_post !== Number(id_post)
+    ) {
+      throw new Error(
+        `Já existe uma postagem usando a ordem ${ordem}`
+      );
+    }
+  }
+
   return await repoPosts.Configurar({
     id_post,
     ativo,
     ordem
   });
 }
+
 
 
 /**
