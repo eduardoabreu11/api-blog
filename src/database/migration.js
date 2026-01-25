@@ -69,22 +69,50 @@ async function migrate() {
   await db.query(`
     CREATE TABLE IF NOT EXISTS posts (
       id_post SERIAL PRIMARY KEY,
+      id_usuario INTEGER REFERENCES usuarios(id_usuario),
       titulo TEXT,
       texto TEXT,
       imagem_url TEXT,
-      imagem_public_id TEXT
+      imagem_public_id TEXT,
+      created_at TIMESTAMP DEFAULT NOW(),
+      ativo BOOLEAN DEFAULT true,
+      ordem INTEGER
     );
   `);
+
+  // Se a tabela já existia antes, garante que as colunas existam:
+  await db.query(`
+    ALTER TABLE posts
+    ADD COLUMN IF NOT EXISTS id_usuario INTEGER;
+  `);
+
+  // tenta criar a FK (se já existir, ignora no catch)
+  try {
+    await db.query(`
+      ALTER TABLE posts
+      ADD CONSTRAINT posts_id_usuario_fk
+      FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario);
+    `);
+  } catch (e) {}
 
   await db.query(`
     ALTER TABLE posts
     ADD COLUMN IF NOT EXISTS imagem_public_id TEXT;
   `);
 
-  // ✅ DATA DO POST
   await db.query(`
     ALTER TABLE posts
     ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();
+  `);
+
+  await db.query(`
+    ALTER TABLE posts
+    ADD COLUMN IF NOT EXISTS ativo BOOLEAN DEFAULT true;
+  `);
+
+  await db.query(`
+    ALTER TABLE posts
+    ADD COLUMN IF NOT EXISTS ordem INTEGER;
   `);
 
   /* =========================
@@ -106,7 +134,6 @@ async function migrate() {
     ADD COLUMN IF NOT EXISTS imagem_public_id TEXT;
   `);
 
-  // ✅ DATA DA MATÉRIA
   await db.query(`
     ALTER TABLE materias
     ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();
@@ -148,7 +175,6 @@ async function migrate() {
     ADD COLUMN IF NOT EXISTS foto_public_id TEXT;
   `);
 
-  // ✅ DATA DO POST DO COLUNISTA
   await db.query(`
     ALTER TABLE posts_colunistas
     ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();
