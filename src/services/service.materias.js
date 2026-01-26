@@ -1,5 +1,6 @@
 import repoMaterias from "../repositories/repository-pg.materias.js";
 
+
 async function PegarMaterias() {
   return await repoMaterias.PegarMaterias();
 }
@@ -120,22 +121,33 @@ async function ConfigMateria({ id_materia, ativo, ordem }) {
     throw new Error("Matéria não encontrada");
   }
 
-  // 🔥 VALIDA ORDEM DUPLICADA
-  if (ativo === true && ordem != null) {
+  // ✅ NORMALIZAÇÃO
+  const ativoBool =
+    ativo === true || ativo === "true";
+
+  const ordemNum =
+    ordem === null || ordem === undefined || ordem === ""
+      ? null
+      : Number(ordem);
+
+  // 🔥 AGORA A VALIDAÇÃO FUNCIONA
+  if (ativoBool && ordemNum !== null) {
     const ordemExiste = await repoMaterias.ExisteOrdemAtiva({
-      ordem,
+      ordem: ordemNum,
       id_materia
     });
 
     if (ordemExiste) {
-      throw new Error(`Já existe uma matéria ativa com a ordem ${ordem}`);
+      throw new Error(
+        `Já existe uma matéria ativa com a ordem ${ordemNum}`
+      );
     }
   }
 
   return await repoMaterias.ConfigMateria({
     id_materia,
-    ativo,
-    ordem
+    ativo: ativoBool,
+    ordem: ordemNum
   });
 }
 
