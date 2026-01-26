@@ -109,6 +109,26 @@ async function ExcluirMateria(id_materia) {
   return await repoMaterias.ExcluirMateria(id_materia);
 }
 
+
+async function ConfigMateria({ id_materia, ativo, ordem }) {
+  if (!id_materia || isNaN(id_materia)) {
+    throw new Error("ID da matéria inválido");
+  }
+
+  const materiaExistente = await repoMaterias.PegarMateria(id_materia);
+
+  if (!materiaExistente) {
+    throw new Error("Matéria não encontrada");
+  }
+
+  return await repoMaterias.ConfigMateria({
+    id_materia,
+    ativo,
+    ordem
+  });
+}
+
+
 export default {
   PegarMaterias,
   ListarMaterias,
@@ -117,4 +137,5 @@ export default {
   InserirMateria,
   EditarMateria,
   ExcluirMateria,
+  ConfigMateria
 };

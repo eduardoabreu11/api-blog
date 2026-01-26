@@ -136,6 +136,11 @@ router.delete("/materias/:id_materia", jwt.ValidateJwt, controllerMaterias.Exclu
 
 router.get("/materias", controllerMaterias.ListarMaterias);
 router.get("/materias/:id_materia", controllerMaterias.ListarMateria);
+router.patch(
+  "/materias/:id_materia/config",
+  jwt.ValidateJwt,
+  controllerMaterias.ConfigMateria
+);
 
 
 

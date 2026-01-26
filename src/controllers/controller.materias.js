@@ -131,6 +131,28 @@ async function ExcluirMateria(req, res) {
   }
 }
 
+async function ConfigMateria(req, res) {
+  try {
+    const { id_materia } = req.params;
+    const { ativo, ordem } = req.body;
+
+    const materia = await serviceMaterias.ConfigMateria({
+      id_materia,
+      ativo,
+      ordem
+    });
+
+    return res.status(200).json(materia);
+  } catch (error) {
+    console.error(error);
+
+    return res.status(400).json({
+      error: error.message || "Erro ao atualizar configuração"
+    });
+  }
+}
+
+
 
 export default {
   PegarMaterias,
@@ -140,4 +162,5 @@ export default {
   ExcluirMateria,
   ListarMaterias,
   ListarMateria,
+  ConfigMateria
 };

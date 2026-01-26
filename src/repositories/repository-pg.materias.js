@@ -118,6 +118,26 @@ async function ExcluirMateria( id_materia ) {
   return { id_materia };
 }
 
+
+async function ConfigMateria({ id_materia, ativo, ordem }) {
+  const sql = `
+    UPDATE materias
+       SET ativo = COALESCE($1, ativo),
+           ordem = COALESCE($2, ordem)
+     WHERE id_materia = $3
+     RETURNING *
+  `;
+
+  const { rows } = await db.query(sql, [
+    ativo,
+    ordem,
+    id_materia
+  ]);
+
+  return rows[0];
+}
+
+
 /* =========================
    EXPORT
 ========================= */
@@ -129,5 +149,6 @@ export default {
   ListarMaterias,
   InserirMateria,
   EditarMateria,
-  ExcluirMateria
+  ExcluirMateria,
+  ConfigMateria
 };
