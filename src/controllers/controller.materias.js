@@ -136,18 +136,23 @@ async function ConfigMateria(req, res) {
     const { id_materia } = req.params;
     const { ativo, ordem } = req.body;
 
-    if (ativo === true && ordem != null) {
-      const existe = await serviceMaterias.ExisteOrdemAtiva({
-        ordem,
-        id_materia
-      });
+   if (ordem != null) {
+  const materiaAtual = await serviceMaterias.PegarMateria(id_materia);
 
-      if (existe) {
-        return res.status(400).json({
-          error: `Já existe uma matéria ativa na posição ${ordem}`
-        });
-      }
+  if (materiaAtual.ativo === true) {
+    const existe = await serviceMaterias.ExisteOrdemAtiva({
+      ordem,
+      id_materia
+    });
+
+    if (existe) {
+      return res.status(400).json({
+        error: `Já existe uma matéria ativa na posição ${ordem}`
+      });
     }
+  }
+}
+
 
     const materia = await serviceMaterias.ConfigMateria({
       id_materia,
