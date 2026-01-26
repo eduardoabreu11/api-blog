@@ -180,6 +180,21 @@ async function migrate() {
     ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();
   `);
 
+  /* =========================
+   MATÉRIAS (CONTROLE EDITORIAL)
+========================= */
+
+await db.query(`
+  ALTER TABLE materias
+  ADD COLUMN IF NOT EXISTS ativo BOOLEAN DEFAULT true;
+`);
+
+await db.query(`
+  ALTER TABLE materias
+  ADD COLUMN IF NOT EXISTS ordem INTEGER;
+`);
+
+
   console.log("✅ Migrations executadas com sucesso");
 }
 
