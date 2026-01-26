@@ -8,23 +8,29 @@ async function PegarMaterias() {
   const sql = `
     SELECT *
       FROM materias
-     ORDER BY id_materia DESC
+     ORDER BY
+       ativo DESC,
+       ordem ASC NULLS LAST,
+       created_at DESC
   `;
-
   const { rows } = await db.query(sql);
   return rows;
 }
+
 
 async function ListarMaterias() {
   const sql = `
     SELECT *
       FROM materias
-     ORDER BY id_materia DESC
+     WHERE ativo = true
+     ORDER BY
+       ordem ASC NULLS LAST,
+       created_at DESC
   `;
-
   const { rows } = await db.query(sql);
   return rows;
 }
+
 
 async function PegarMateria(id_materia) {
   const sql = `
@@ -72,16 +78,20 @@ async function EditarMateria({
   titulo,
   texto,
   imagem_url,
-  subtitulo
+  subtitulo,
+  ativo,
+  ordem
 }) {
   const sql = `
     UPDATE materias
-       SET titulo      = COALESCE($1, titulo),
-           texto       = COALESCE($2, texto),
-           imagem_url  = COALESCE($3, imagem_url),
-           subtitulo   = COALESCE($4, subtitulo)
-     WHERE id_materia = $5
-     RETURNING id_materia, titulo, texto, imagem_url, subtitulo
+       SET titulo     = COALESCE($1, titulo),
+           texto      = COALESCE($2, texto),
+           imagem_url = COALESCE($3, imagem_url),
+           subtitulo  = COALESCE($4, subtitulo),
+           ativo      = COALESCE($5, ativo),
+           ordem      = COALESCE($6, ordem)
+     WHERE id_materia = $7
+     RETURNING *
   `;
 
   const { rows } = await db.query(sql, [
@@ -89,13 +99,16 @@ async function EditarMateria({
     texto,
     imagem_url,
     subtitulo,
+    ativo,
+    ordem,
     id_materia
   ]);
 
-  return rows[0] || null;
+  return rows[0];
 }
 
-async function ExcluirMateria({ id_materia }) {
+
+async function ExcluirMateria( id_materia ) {
   const sql = `
     DELETE FROM materias
      WHERE id_materia = $1

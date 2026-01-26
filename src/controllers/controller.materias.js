@@ -84,7 +84,7 @@ async function InserirMateria(req, res) {
 async function EditarMateria(req, res) {
   try {
     const { id_materia } = req.params;
-    const { titulo, subtitulo, texto } = req.body;
+    const { titulo, subtitulo, texto, ativo, ordem } = req.body;
     let imagem_url = null;
 
     if (req.file) {
@@ -98,6 +98,8 @@ async function EditarMateria(req, res) {
       subtitulo,
       texto,
       imagem_url,
+      ativo,
+      ordem
     });
 
     return res.status(200).json(materia);

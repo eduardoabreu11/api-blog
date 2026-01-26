@@ -61,27 +61,22 @@ async function InserirMateria({ titulo, subtitulo, texto, imagem_url }) {
   });
 }
 
-async function EditarMateria({ id_materia, titulo, subtitulo, texto, imagem_url }) {
-  if (!id_materia) {
-    throw new Error("ID da matéria é obrigatório");
-  }
-
-  if (isNaN(id_materia)) {
+async function EditarMateria({
+  id_materia,
+  titulo,
+  subtitulo,
+  texto,
+  imagem_url,
+  ativo,
+  ordem
+}) {
+  if (!id_materia || isNaN(id_materia)) {
     throw new Error("ID da matéria inválido");
   }
 
   const materiaExistente = await repoMaterias.PegarMateria(id_materia);
-
   if (!materiaExistente) {
     throw new Error("Matéria não encontrada");
-  }
-
-  if (!titulo || typeof titulo !== "string") {
-    throw new Error("Título é obrigatório");
-  }
-
-  if (!texto || typeof texto !== "string") {
-    throw new Error("Texto é obrigatório");
   }
 
   return await repoMaterias.EditarMateria({
@@ -90,8 +85,11 @@ async function EditarMateria({ id_materia, titulo, subtitulo, texto, imagem_url 
     subtitulo,
     texto,
     imagem_url,
+    ativo,
+    ordem
   });
 }
+
 
 async function ExcluirMateria(id_materia) {
   if (!id_materia) {
