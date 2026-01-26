@@ -111,42 +111,24 @@ async function ExcluirMateria(id_materia) {
 }
 
 
-async function ConfigMateria(req, res) {
-  try {
-    const { id_materia } = req.params;
-    const { ativo, ordem } = req.body;
-
-    // 🔥 VALIDAÇÃO CRÍTICA
-    if (ativo === true && ordem != null) {
-      const existe = await serviceMaterias.ExisteOrdemAtiva({
-        ordem,
-        id_materia
-      });
-
-      if (existe) {
-        return res.status(400).json({
-          error: `Já existe uma matéria ativa na posição ${ordem}`
-        });
-      }
-    }
-
-    const materia = await serviceMaterias.ConfigMateria({
-      id_materia,
-      ativo,
-      ordem
-    });
-
-    return res.status(200).json(materia);
-  } catch (error) {
-    console.error(error);
-    return res.status(400).json({
-      error: error.message || "Erro ao atualizar configuração"
-    });
+async function ConfigMateria({ id_materia, ativo, ordem }) {
+  if (!id_materia || isNaN(id_materia)) {
+    throw new Error("ID da matéria inválido");
   }
+
+  return await repoMaterias.ConfigMateria({
+    id_materia,
+    ativo,
+    ordem
+  });
 }
 
-
-
+async function ExisteOrdemAtiva({ ordem, id_materia }) {
+  return await repoMaterias.ExisteOrdemAtiva({
+    ordem,
+    id_materia
+  });
+}
 
 export default {
   PegarMaterias,
@@ -156,5 +138,6 @@ export default {
   InserirMateria,
   EditarMateria,
   ExcluirMateria,
-  ConfigMateria
+  ConfigMateria,
+  ExisteOrdemAtiva
 };

@@ -136,6 +136,19 @@ async function ConfigMateria(req, res) {
     const { id_materia } = req.params;
     const { ativo, ordem } = req.body;
 
+    if (ativo === true && ordem != null) {
+      const existe = await serviceMaterias.ExisteOrdemAtiva({
+        ordem,
+        id_materia
+      });
+
+      if (existe) {
+        return res.status(400).json({
+          error: `Já existe uma matéria ativa na posição ${ordem}`
+        });
+      }
+    }
+
     const materia = await serviceMaterias.ConfigMateria({
       id_materia,
       ativo,
@@ -145,12 +158,12 @@ async function ConfigMateria(req, res) {
     return res.status(200).json(materia);
   } catch (error) {
     console.error(error);
-
     return res.status(400).json({
       error: error.message || "Erro ao atualizar configuração"
     });
   }
 }
+
 
 
 
