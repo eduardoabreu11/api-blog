@@ -111,45 +111,41 @@ async function ExcluirMateria(id_materia) {
 }
 
 
-async function ConfigMateria({ id_materia, ativo, ordem }) {
-  if (!id_materia || isNaN(id_materia)) {
-    throw new Error("ID da matéria inválido");
-  }
+async function ConfigMateria(req, res) {
+  try {
+    const { id_materia } = req.params;
+    const { ativo, ordem } = req.body;
 
-  const materiaExistente = await repoMaterias.PegarMateria(id_materia);
-  if (!materiaExistente) {
-    throw new Error("Matéria não encontrada");
-  }
+    // 🔥 VALIDAÇÃO CRÍTICA
+    if (ativo === true && ordem != null) {
+      const existe = await serviceMaterias.ExisteOrdemAtiva({
+        ordem,
+        id_materia
+      });
 
-  // ✅ NORMALIZAÇÃO
-  const ativoBool =
-    ativo === true || ativo === "true";
+      if (existe) {
+        return res.status(400).json({
+          error: `Já existe uma matéria ativa na posição ${ordem}`
+        });
+      }
+    }
 
-  const ordemNum =
-    ordem === null || ordem === undefined || ordem === ""
-      ? null
-      : Number(ordem);
-
-  // 🔥 AGORA A VALIDAÇÃO FUNCIONA
-  if (ativoBool && ordemNum !== null) {
-    const ordemExiste = await repoMaterias.ExisteOrdemAtiva({
-      ordem: ordemNum,
-      id_materia
+    const materia = await serviceMaterias.ConfigMateria({
+      id_materia,
+      ativo,
+      ordem
     });
 
-    if (ordemExiste) {
-      throw new Error(
-        `Já existe uma matéria ativa com a ordem ${ordemNum}`
-      );
-    }
+    return res.status(200).json(materia);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({
+      error: error.message || "Erro ao atualizar configuração"
+    });
   }
-
-  return await repoMaterias.ConfigMateria({
-    id_materia,
-    ativo: ativoBool,
-    ordem: ordemNum
-  });
 }
+
+
 
 
 export default {

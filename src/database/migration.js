@@ -194,6 +194,17 @@ await db.query(`
   ADD COLUMN IF NOT EXISTS ordem INTEGER;
 `);
 
+/* =========================
+   MATÉRIAS - ORDEM ÚNICA (ATIVAS)
+========================= */
+
+await db.query(`
+  CREATE UNIQUE INDEX IF NOT EXISTS materias_ordem_ativa_unica
+  ON materias (ordem)
+  WHERE ativo = true AND ordem IS NOT NULL;
+`);
+
+
 
   console.log("✅ Migrations executadas com sucesso");
 }
