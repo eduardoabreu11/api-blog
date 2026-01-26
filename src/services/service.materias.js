@@ -116,9 +116,20 @@ async function ConfigMateria({ id_materia, ativo, ordem }) {
   }
 
   const materiaExistente = await repoMaterias.PegarMateria(id_materia);
-
   if (!materiaExistente) {
     throw new Error("Matéria não encontrada");
+  }
+
+  // 🔥 VALIDA ORDEM DUPLICADA
+  if (ativo === true && ordem != null) {
+    const ordemExiste = await repoMaterias.ExisteOrdemAtiva({
+      ordem,
+      id_materia
+    });
+
+    if (ordemExiste) {
+      throw new Error(`Já existe uma matéria ativa com a ordem ${ordem}`);
+    }
   }
 
   return await repoMaterias.ConfigMateria({

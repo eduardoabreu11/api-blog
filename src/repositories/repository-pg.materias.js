@@ -138,6 +138,21 @@ async function ConfigMateria({ id_materia, ativo, ordem }) {
 }
 
 
+async function ExisteOrdemAtiva({ ordem, id_materia }) {
+  const sql = `
+    SELECT 1
+      FROM materias
+     WHERE ordem = $1
+       AND ativo = true
+       AND ($2::int IS NULL OR id_materia <> $2)
+     LIMIT 1
+  `;
+
+  const { rows } = await db.query(sql, [ordem, id_materia || null]);
+  return rows.length > 0;
+}
+
+
 /* =========================
    EXPORT
 ========================= */
@@ -150,5 +165,6 @@ export default {
   InserirMateria,
   EditarMateria,
   ExcluirMateria,
-  ConfigMateria
+  ConfigMateria,
+  ExisteOrdemAtiva
 };
