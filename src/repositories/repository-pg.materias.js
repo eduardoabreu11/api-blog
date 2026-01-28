@@ -89,7 +89,7 @@ async function EditarMateria({
            imagem_url = COALESCE($3, imagem_url),
            subtitulo  = COALESCE($4, subtitulo),
            ativo      = COALESCE($5, ativo),
-           ordem      = COALESCE($6, ordem)
+           ordem      = $6
      WHERE id_materia = $7
      RETURNING *
   `;
@@ -123,7 +123,7 @@ async function ConfigMateria({ id_materia, ativo, ordem }) {
   const sql = `
     UPDATE materias
        SET ativo = COALESCE($1, ativo),
-           ordem = COALESCE($2, ordem)
+           ordem = $2
      WHERE id_materia = $3
      RETURNING *
   `;

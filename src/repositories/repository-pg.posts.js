@@ -120,14 +120,20 @@ async function Configurar({ id_post, ativo, ordem }) {
   const sql = `
     UPDATE posts
        SET ativo = COALESCE($1, ativo),
-           ordem = COALESCE($2, ordem)
+           ordem = $2
      WHERE id_post = $3
      RETURNING *
   `;
 
-  const { rows } = await db.query(sql, [ativo, ordem, id_post]);
+  const { rows } = await db.query(sql, [
+    ativo,
+    ordem,
+    id_post
+  ]);
+
   return rows[0];
 }
+
 
 
 /* =========================
