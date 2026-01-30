@@ -16,54 +16,6 @@ async function migrate() {
   `);
 
   /* =========================
-     BANNERS
-  ========================= */
-  await db.query(`
-    CREATE TABLE IF NOT EXISTS banners (
-      id_banner SERIAL PRIMARY KEY,
-      banner TEXT,
-      banner_public_id TEXT,
-      banner_mobile TEXT,
-      banner_mobile_public_id TEXT,
-      tipo TEXT
-    );
-  `);
-
-  await db.query(`
-    ALTER TABLE banners
-    ADD COLUMN IF NOT EXISTS banner_public_id TEXT;
-  `);
-
-  await db.query(`
-    ALTER TABLE banners
-    ADD COLUMN IF NOT EXISTS banner_mobile_public_id TEXT;
-  `);
-
-  /* =========================
-     VÍDEOS
-  ========================= */
-  await db.query(`
-    CREATE TABLE IF NOT EXISTS videos (
-      id_video SERIAL PRIMARY KEY,
-      video_url TEXT,
-      capa_video TEXT,
-      ativo BOOLEAN DEFAULT false,
-      video_public_id TEXT,
-      capa_public_id TEXT
-    );
-  `);
-
-  await db.query(`
-    ALTER TABLE videos
-    ADD COLUMN IF NOT EXISTS video_public_id TEXT;
-  `);
-
-  await db.query(`
-    ALTER TABLE videos
-    ADD COLUMN IF NOT EXISTS capa_public_id TEXT;
-  `);
-
-  /* =========================
      POSTS
   ========================= */
   await db.query(`
@@ -75,44 +27,8 @@ async function migrate() {
       imagem_url TEXT,
       imagem_public_id TEXT,
       created_at TIMESTAMP DEFAULT NOW(),
-      ativo BOOLEAN DEFAULT true,
-      ordem INTEGER
+      ativo BOOLEAN DEFAULT true
     );
-  `);
-
-  // Se a tabela já existia antes, garante que as colunas existam:
-  await db.query(`
-    ALTER TABLE posts
-    ADD COLUMN IF NOT EXISTS id_usuario INTEGER;
-  `);
-
-  // tenta criar a FK (se já existir, ignora no catch)
-  try {
-    await db.query(`
-      ALTER TABLE posts
-      ADD CONSTRAINT posts_id_usuario_fk
-      FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario);
-    `);
-  } catch (e) {}
-
-  await db.query(`
-    ALTER TABLE posts
-    ADD COLUMN IF NOT EXISTS imagem_public_id TEXT;
-  `);
-
-  await db.query(`
-    ALTER TABLE posts
-    ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();
-  `);
-
-  await db.query(`
-    ALTER TABLE posts
-    ADD COLUMN IF NOT EXISTS ativo BOOLEAN DEFAULT true;
-  `);
-
-  await db.query(`
-    ALTER TABLE posts
-    ADD COLUMN IF NOT EXISTS ordem INTEGER;
   `);
 
   /* =========================
@@ -125,88 +41,54 @@ async function migrate() {
       subtitulo TEXT,
       texto TEXT,
       imagem_url TEXT,
-      imagem_public_id TEXT
+      imagem_public_id TEXT,
+      created_at TIMESTAMP DEFAULT NOW(),
+      ativo BOOLEAN DEFAULT true
     );
   `);
 
-  await db.query(`
-    ALTER TABLE materias
-    ADD COLUMN IF NOT EXISTS imagem_public_id TEXT;
-  `);
-
-  await db.query(`
-    ALTER TABLE materias
-    ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();
-  `);
-
   /* =========================
-     COLUNISTAS
+     MIDIAS FOOTER (CARROSSEL)
   ========================= */
   await db.query(`
-    CREATE TABLE IF NOT EXISTS colunistas (
-      id_colunista SERIAL PRIMARY KEY,
-      nome TEXT,
-      foto TEXT,
-      foto_public_id TEXT
+    CREATE TABLE IF NOT EXISTS midias_footer (
+      id_midia SERIAL PRIMARY KEY,
+
+      id_post INTEGER REFERENCES posts(id_post) ON DELETE CASCADE,
+      id_materia INTEGER REFERENCES materias(id_materia) ON DELETE CASCADE,
+
+      imagem_url TEXT NOT NULL,
+      imagem_public_id TEXT,
+
+      created_at TIMESTAMP DEFAULT NOW(),
+
+      CHECK (
+        (id_post IS NOT NULL AND id_materia IS NULL)
+        OR
+        (id_post IS NULL AND id_materia IS NOT NULL)
+      )
     );
   `);
 
-  await db.query(`
-    ALTER TABLE colunistas
-    ADD COLUMN IF NOT EXISTS foto_public_id TEXT;
-  `);
-
   /* =========================
-     POSTS DOS COLUNISTAS
+     ÍNDICES (PERFORMANCE)
   ========================= */
   await db.query(`
-    CREATE TABLE IF NOT EXISTS posts_colunistas (
-      id_post_colunista SERIAL PRIMARY KEY,
-      id_colunista INTEGER REFERENCES colunistas(id_colunista),
-      titulo TEXT,
-      texto TEXT,
-      foto TEXT,
-      foto_public_id TEXT
-    );
+    CREATE INDEX IF NOT EXISTS idx_midias_footer_post
+    ON midias_footer (id_post);
   `);
 
   await db.query(`
-    ALTER TABLE posts_colunistas
-    ADD COLUMN IF NOT EXISTS foto_public_id TEXT;
+    CREATE INDEX IF NOT EXISTS idx_midias_footer_materia
+    ON midias_footer (id_materia);
   `);
-
-  await db.query(`
-    ALTER TABLE posts_colunistas
-    ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();
-  `);
-
-  /* =========================
-   MATÉRIAS (CONTROLE EDITORIAL)
-========================= */
-
-await db.query(`
-  ALTER TABLE materias
-  ADD COLUMN IF NOT EXISTS ativo BOOLEAN DEFAULT true;
-`);
-
-await db.query(`
-  ALTER TABLE materias
-  ADD COLUMN IF NOT EXISTS ordem INTEGER;
-`);
-
-/* =========================
-   MATÉRIAS - ORDEM ÚNICA (ATIVAS)
-========================= */
-
-await db.query(`
-  CREATE UNIQUE INDEX IF NOT EXISTS materias_ordem_ativa_unica
-  ON materias (ordem)
-  WHERE ativo = true AND ordem IS NOT NULL;
-`);
-
-
 
   console.log("✅ Migrations executadas com sucesso");
 }
 
-migrate();
+migrate()
+  .then(() => process.exit())
+  .catch(err => {
+    console.error("❌ Erro ao rodar migrations:", err);
+    process.exit(1);
+  });

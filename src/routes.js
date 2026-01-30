@@ -7,7 +7,7 @@ import controllerVideos from "./controllers/controller.videos.js";
 import jwt from "./token.js";
 import upload from "./middlewares/upload.js";
 import uploadVideo from "./middlewares/upload.video.js";
-
+import controllerMidiaFooter from "./controllers/controller.midia-footer.js";
 import controllerMaterias from "./controllers/controller.materias.js";
 
 const router = Router();
@@ -142,6 +142,42 @@ router.patch(
   controllerMaterias.ConfigMateria
 );
 
+
+// =========================
+// MÍDIAS FOOTER (CARROSSEL)
+// =========================
+
+
+router.post(
+  "/midias-footer",
+  jwt.ValidateJwt,
+  upload.single("imagem"),
+  controllerMidiaFooter.Inserir
+);
+
+router.put(
+  "/midias-footer/:id_midia",
+  jwt.ValidateJwt,
+  upload.single("imagem"),
+  controllerMidiaFooter.Editar
+);
+
+router.delete(
+  "/midias-footer/:id_midia",
+  jwt.ValidateJwt,
+  controllerMidiaFooter.Excluir
+);
+
+// público
+router.get(
+  "/posts/:id_post/midias-footer",
+  controllerMidiaFooter.ListarPorPost
+);
+
+router.get(
+  "/materias/:id_materia/midias-footer",
+  controllerMidiaFooter.ListarPorMateria
+);
 
 
 export default router;
