@@ -48,40 +48,80 @@ async function migrate() {
   `);
 
   /* =========================
-     MIDIAS FOOTER (CARROSSEL)
+     MIDIAS FOOTER
   ========================= */
   await db.query(`
     CREATE TABLE IF NOT EXISTS midias_footer (
       id_midia SERIAL PRIMARY KEY,
-
-      id_post INTEGER REFERENCES posts(id_post) ON DELETE CASCADE,
-      id_materia INTEGER REFERENCES materias(id_materia) ON DELETE CASCADE,
-
       imagem_url TEXT NOT NULL,
       imagem_public_id TEXT,
-
-      created_at TIMESTAMP DEFAULT NOW(),
-
-      CHECK (
-        (id_post IS NOT NULL AND id_materia IS NULL)
-        OR
-        (id_post IS NULL AND id_materia IS NOT NULL)
-      )
+      created_at TIMESTAMP DEFAULT NOW()
     );
   `);
 
   /* =========================
-     ÍNDICES (PERFORMANCE)
+     COLUNAS DEFENSIVAS
   ========================= */
   await db.query(`
-    CREATE INDEX IF NOT EXISTS idx_midias_footer_post
-    ON midias_footer (id_post);
+    ALTER TABLE midias_footer
+    ADD COLUMN IF NOT EXISTS id_post INTEGER;
   `);
 
   await db.query(`
-    CREATE INDEX IF NOT EXISTS idx_midias_footer_materia
-    ON midias_footer (id_materia);
+    ALTER TABLE midias_footer
+    ADD COLUMN IF NOT EXISTS id_materia INTEGER;
   `);
+
+    /* =========================
+     REMOVER LIXO ANTIGO
+  ========================= */
+  await db.query(`
+    ALTER TABLE midias_footer
+    DROP COLUMN IF EXISTS tipo_ref;
+  `);
+
+  await db.query(`
+    ALTER TABLE midias_footer
+    DROP COLUMN IF EXISTS id_ref CASCADE;
+  `);
+
+  /* =========================
+     FOREIGN KEYS
+  ========================= */
+  try {
+    await db.query(`
+      ALTER TABLE midias_footer
+      ADD CONSTRAINT fk_midias_footer_post
+      FOREIGN KEY (id_post)
+      REFERENCES posts(id_post)
+      ON DELETE CASCADE;
+    `);
+  } catch {}
+
+  try {
+    await db.query(`
+      ALTER TABLE midias_footer
+      ADD CONSTRAINT fk_midias_footer_materia
+      FOREIGN KEY (id_materia)
+      REFERENCES materias(id_materia)
+      ON DELETE CASCADE;
+    `);
+  } catch {}
+
+  /* =========================
+     CHECK (OU POST OU MATÉRIA)
+  ========================= */
+  try {
+    await db.query(`
+      ALTER TABLE midias_footer
+      ADD CONSTRAINT chk_midias_footer_ref
+      CHECK (
+        (id_post IS NOT NULL AND id_materia IS NULL)
+        OR
+        (id_post IS NULL AND id_materia IS NOT NULL)
+      );
+    `);
+  } catch {}
 
   console.log("✅ Migrations executadas com sucesso");
 }
