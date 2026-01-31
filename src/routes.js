@@ -118,13 +118,49 @@ router.get("/colunistas", controllerColunistas.ListarColunistas);
 
 
 // Posts do colunista
-router.get("/colunistas/:id_colunista/posts/:id_post_colunista",controllerColunistas.PegarPost);
-router.get("/admin/colunistas/:id_colunista/posts", jwt.ValidateJwt, controllerColunistas.PegarPosts);  
-router.post("/colunistas/:id_colunista/posts", jwt.ValidateJwt, upload.single('foto'), controllerColunistas.InserirPost);  
-router.put("/colunistas/:id_colunista/posts/:id_post_colunista", jwt.ValidateJwt, upload.single('foto'), controllerColunistas.EditarPost);  
-router.delete("/colunistas/:id_colunista/posts/:id_post_colunista", jwt.ValidateJwt, controllerColunistas.ExcluirPost);
+// ADMIN
+router.get(
+  "/admin/colunistas/:id_colunista/posts",
+  jwt.ValidateJwt,
+  controllerColunistas.PegarPosts
+);
 
-router.get("/colunistas/:id_colunista/posts", controllerColunistas.ListarPosts);
+router.get(
+  "/admin/colunistas/:id_colunista/posts/:id_post_colunista",
+  jwt.ValidateJwt,
+  controllerColunistas.PegarPost
+);
+
+router.post(
+  "/admin/colunistas/:id_colunista/posts",
+  jwt.ValidateJwt,
+  upload.single("foto"),
+  controllerColunistas.InserirPost
+);
+
+router.put(
+  "/admin/colunistas/:id_colunista/posts/:id_post_colunista",
+  jwt.ValidateJwt,
+  upload.single("foto"),
+  controllerColunistas.EditarPost
+);
+
+router.delete(
+  "/admin/colunistas/:id_colunista/posts/:id_post_colunista",
+  jwt.ValidateJwt,
+  controllerColunistas.ExcluirPost
+);
+
+router.get(
+  "/colunistas/:id_colunista/posts",
+  controllerColunistas.ListarPosts
+);
+
+router.get(
+  "/colunistas/:id_colunista/posts/:id_post_colunista",
+  controllerColunistas.PegarPost
+);
+
 
 
 
