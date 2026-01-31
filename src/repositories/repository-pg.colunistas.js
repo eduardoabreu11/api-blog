@@ -13,6 +13,29 @@ async function PegarColunistas() {
   return rows;
 }
 
+async function PegarPost({ id_colunista, id_post_colunista }) {
+  const { rows } = await db.query(
+    `
+    SELECT
+      p.id_post_colunista,
+      p.titulo,
+      p.texto,
+      p.foto,
+      p.created_at,
+      c.nome AS nome_colunista,
+      c.foto AS foto_colunista
+    FROM posts_colunistas p
+    JOIN colunistas c ON c.id_colunista = p.id_colunista
+    WHERE p.id_colunista = $1
+      AND p.id_post_colunista = $2
+    `,
+    [id_colunista, id_post_colunista]
+  );
+
+  return rows[0] || null;
+}
+
+
 async function PegarColunistaPorId(id_colunista) {
   const { rows } = await db.query(
     `SELECT * FROM colunistas WHERE id_colunista = $1`,
@@ -159,4 +182,5 @@ export default {
   InserirPost,
   EditarPost,
   ExcluirPost,
+  PegarPost
 };

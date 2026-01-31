@@ -7,6 +7,18 @@ import repoColunistas from "../repositories/repository-pg.colunistas.js";
 async function PegarColunistas() {
   return repoColunistas.PegarColunistas();
 }
+async function PegarPost({ id_colunista, id_post_colunista }) {
+  if (!id_colunista || isNaN(id_colunista)) {
+    throw new Error("Colunista inválido");
+  }
+
+  if (!id_post_colunista || isNaN(id_post_colunista)) {
+    throw new Error("Post inválido");
+  }
+
+  return repoColunistas.PegarPost({ id_colunista, id_post_colunista });
+}
+
 
 async function ListarColunistas() {
   return repoColunistas.ListarColunistas();
@@ -153,4 +165,5 @@ export default {
   InserirPost,
   EditarPost,
   ExcluirPost,
+  PegarPosts
 };

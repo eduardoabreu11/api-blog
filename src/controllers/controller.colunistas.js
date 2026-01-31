@@ -15,6 +15,27 @@ async function PegarColunistas(req, res) {
   }
 }
 
+async function PegarPost(req, res) {
+  try {
+    const { id_colunista, id_post_colunista } = req.params;
+
+    const post = await serviceColunistas.PegarPost({
+      id_colunista,
+      id_post_colunista,
+    });
+
+    if (!post) {
+      return res.status(404).json({ error: "Post não encontrado" });
+    }
+
+    return res.status(200).json(post);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Erro ao buscar post" });
+  }
+}
+
+
 async function ListarColunistas(req, res) {
   try {
     const colunistas = await serviceColunistas.ListarColunistas();
@@ -181,4 +202,5 @@ export default {
   InserirPost,
   EditarPost,
   ExcluirPost,
+  PegarPost
 };
