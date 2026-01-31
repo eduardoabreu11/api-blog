@@ -165,5 +165,5 @@ export default {
   InserirPost,
   EditarPost,
   ExcluirPost,
-  PegarPosts
+  PegarPost
 };
